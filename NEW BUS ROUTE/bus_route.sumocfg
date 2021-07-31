@@ -1,0 +1,14 @@
+<configuration>
+    <input>
+        <net-file value="bus_route_mod2.net.xml"/>
+        <route-files value="bus_route.rou.xml"/>
+        <additional-files value="bus_route_additional.add.xml"/>
+    </input>
+    <time>
+        <begin value="0"/>
+        <step-length value="1" />
+    </time>
+	<processing>
+		<time-to-teleport value="-1"/>
+	</processing>
+</configuration>

@@ -1,0 +1,19 @@
+<additional>
+
+  <!--	add bus stops here
+        bu stops taken from ptv route of number 900 bus from
+        chadstone shopping centre to monash university bus interchange
+	-->
+
+	<busStop id="r1s1" lane="-787851477_0" startPos="28" endPos="38"/>
+	<busStop id="r1s2" lane="229376392#0_0" startPos="40" endPos="50"/>
+  <busStop id="r1s3" lane="178932594#1_0" startPos="31" endPos="41"/>
+  <busStop id="r1s4" lane="165171774#0_0" startPos="31" endPos="41"/>
+  <busStop id="r1s5" lane="679469626#0_0" startPos="35" endPos="45"/>
+  <busStop id="r1s6" lane="198691699#0_0" startPos="31" endPos="41"/>
+  <busStop id="r1s7" lane="198691696_0" startPos="21" endPos="31"/>
+  <busStop id="r1s8" lane="807418425#1_0" startPos="84" endPos="94"/>
+
+
+
+</additional>

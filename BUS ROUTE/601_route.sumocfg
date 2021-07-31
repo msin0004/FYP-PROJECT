@@ -1,0 +1,14 @@
+<configuration>
+    <input>
+        <net-file value="601_route_mod.net.xml"/>
+        <route-files value="route601_trial.rou.xml"/>
+			<additional-files value="601_add.add.xml"/>
+    </input>
+    <time>
+        <begin value="0"/>
+        <end value="10000"/>
+    </time>
+	<processing>
+		<time-to-teleport value="-1"/>
+	</processing>
+</configuration>
