@@ -8,10 +8,6 @@
 <!--
       ROUTE file
         displays the lanes the bus will take through its route from chadstone shopping cnetre to monash bus interchange
-
-            807418425#1
-
-            -787851477 787448090#0 787448090#1 807426789 -638398362#2
 -->
 
 	<route id="busroute" edges="-787851477 787448090#0 787448090#1 807426789 -638398362#2 -638398362#1
