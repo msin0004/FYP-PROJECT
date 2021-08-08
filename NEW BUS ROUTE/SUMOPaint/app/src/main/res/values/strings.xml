@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">SUMOPaint</string>
+
+    <string name="hello_world">Hello, SUMO!</string>
+    <string name="goodbye_world">Goodbye, SUMO!</string>
+
+    <string name="text_colour">Paint the Vehicle:</string>
+    <string name="colour_red">Red</string>
+    <string name="colour_orange">Orange</string>
+    <string name="colour_yellow">Yellow</string>
+    <string name="colour_green">Green</string>
+    <string name="colour_blue">Blue</string>
+    <string name="colour_purple">Purple</string>
+
+    <string name="imageView_empty_logo_description">No Logo</string>
+    <string name="imageView_Monash_University_logo_description">Monash University Logo</string>
+</resources>

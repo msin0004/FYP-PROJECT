@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <TableLayout
+        android:id="@+id/tableLayoutColourButtons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:shrinkColumns="*"
+        android:stretchColumns="*"
+        android:layout_below="@+id/relativeLayoutPaintTitle"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="@dimen/vertical_margin_small"
+        android:layout_marginLeft="@dimen/horizontal_margin_small"
+        android:layout_marginStart="@dimen/horizontal_margin_small"
+        android:layout_marginRight="@dimen/horizontal_margin_small"
+        android:layout_marginEnd="@dimen/horizontal_margin_small">
+
+        <TableRow
+            android:weightSum="1.0">
+
+            <Button
+                android:id="@+id/buttonRed"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_column="0"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="0.33"
+                android:text="@string/colour_red"
+                android:textSize="20sp"
+                tools:ignore="ButtonStyle" />
+
+            <Button
+                android:id="@+id/buttonOrange"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_column="1"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="0.33"
+                android:text="@string/colour_orange"
+                android:textSize="20sp"
+                tools:ignore="ButtonStyle" />
+
+            <Button
+                android:id="@+id/buttonYellow"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_column="2"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="0.33"
+                android:text="@string/colour_yellow"
+                android:textSize="20sp"
+                tools:ignore="ButtonStyle" />
+
+            <TextView
+                android:id="@+id/textViewConsoleTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/text_colour"
+                android:textColor="#000000"
+                android:textSize="28sp"
+                android:textStyle="bold" />
+
+        </TableRow>
+
+        <TableRow
+            android:weightSum="1.0">
+
+            <Button
+                android:id="@+id/buttonGreen"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_column="0"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="0.33"
+                android:text="@string/colour_green"
+                android:textSize="20sp"
+                tools:ignore="ButtonStyle" />
+
+            <Button
+                android:id="@+id/buttonBlue"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_column="1"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="0.33"
+                android:text="@string/colour_blue"
+                android:textSize="20sp"
+                tools:ignore="ButtonStyle" />
+
+            <Button
+                android:id="@+id/buttonPurple"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_column="2"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="0.33"
+                android:text="@string/colour_purple"
+                android:textSize="20sp"
+                tools:ignore="ButtonStyle" />
+
+            <RelativeLayout
+                android:id="@+id/relativeLayoutPaintTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/horizontal_margin_medium"
+                android:layout_marginLeft="@dimen/horizontal_margin_medium"
+                android:layout_marginTop="@dimen/vertical_margin_medium"
+                android:layout_marginEnd="@dimen/horizontal_margin_medium"
+                android:layout_marginRight="@dimen/horizontal_margin_medium"
+                android:layout_marginBottom="@dimen/vertical_margin_medium">
+
+            </RelativeLayout>
+
+        </TableRow>
+
+    </TableLayout>
+
+    <TableLayout
+        android:id="@+id/tableLayoutLogos"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:shrinkColumns="*"
+        android:stretchColumns="*"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="@dimen/vertical_margin_small"
+        android:layout_marginLeft="@dimen/horizontal_margin_small"
+        android:layout_marginStart="@dimen/horizontal_margin_small"
+        android:layout_marginRight="@dimen/horizontal_margin_small"
+        android:layout_marginEnd="@dimen/horizontal_margin_small">
+
+        <TableRow
+            android:weightSum="1.0">
+
+            <Button
+                android:id="@+id/buttonHelloSUMO"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/vertical_margin_extra_large"
+                android:layout_column="0"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="0.5"
+                android:text="@string/hello_world"
+                android:textSize="20sp"
+                style="?android:attr/borderlessButtonStyle"/>
+
+            <Button
+                android:id="@+id/buttonGoodbyeSUMO"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/vertical_margin_extra_large"
+                android:layout_column="1"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="0.5"
+                android:text="@string/goodbye_world"
+                android:textSize="20sp"
+                style="?android:attr/borderlessButtonStyle"/>
+
+        </TableRow>
+
+        <TableRow
+            android:weightSum="1.0">
+
+            <ImageView
+                android:id="@+id/imageViewEmpty"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_column="0"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="0.5"
+                android:contentDescription="@string/imageView_empty_logo_description"/>
+
+            <ImageView
+                android:id="@+id/imageViewMonash"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_column="1"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="0.5"
+                android:contentDescription="@string/imageView_Monash_University_logo_description"
+                android:src="@drawable/monash_logo_mono" />
+
+        </TableRow>
+
+    </TableLayout>
+
+</RelativeLayout>
