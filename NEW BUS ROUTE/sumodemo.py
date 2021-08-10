@@ -37,6 +37,12 @@ def server(data):
 		init_time = str(start_time) # convert connection time to a string
 		print('Made a connection with', address, 'on', init_time + '.')
 
+		#input from app
+		while True: # infinite loop 2
+			input = client_socket.recv(buffer).decode('UTF-8') # receive client data into buffer
+			if (incoming == 'red'):
+				data.value = 0.1
+
 def bus_eta(bus_id):
 	# this function is a hard coded function to get the eta to the next stop for a bus regarding
 	# this function is hard coded for the chadstone-monash university bus route defined in bus_route.rou.xml
@@ -164,6 +170,9 @@ if __name__ == '__main__':
 			#capacity = traci.vehicle.getPersonCapacity(bus_id)
 			#print('Capacity of vehicle 1: ' + str(capacity))
 
+			#inputs from app
+			if(d.value == 0.1)
+				print("INPUT FROM APP")
 
 		# go to the next time step
 		step += 1000 # in milliseconds
