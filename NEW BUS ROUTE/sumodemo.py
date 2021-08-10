@@ -40,8 +40,13 @@ def server(data):
 		#input from app
 		while True: # infinite loop 2
 			input = client_socket.recv(buffer).decode('UTF-8') # receive client data into buffer
-			if (incoming == 'red'):
-				data.value = 0.1
+
+			if (input == 'red'):
+				print("test from input")
+				data.value = 2
+			if (input == 'update'):
+				print("Sending data")
+				data.value = 10
 
 def bus_eta(bus_id):
 	# this function is a hard coded function to get the eta to the next stop for a bus regarding
@@ -171,8 +176,9 @@ if __name__ == '__main__':
 			#print('Capacity of vehicle 1: ' + str(capacity))
 
 			#inputs from app
-			if(d.value == 0.1)
+			if(d.value == 2):
 				print("INPUT FROM APP")
+				d.value = 0
 
 		# go to the next time step
 		step += 1000 # in milliseconds
