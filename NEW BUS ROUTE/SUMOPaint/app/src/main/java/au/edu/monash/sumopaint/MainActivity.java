@@ -22,6 +22,8 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import android.util.Log;
+
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -35,6 +37,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Button purple;
     private Button hang_up;
     private TextView test_input;
+    private TextView server_connection;
 
     private Socket clientSocket = null;
     private BufferedWriter out = null;
@@ -57,7 +60,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         hang_up = (Button) findViewById(R.id.buttonGoodbyeSUMO);
 
         //sample code
-        test_input = (TextView) findViewById(R.id.textinput);
+        //NOTE
+        //need to define these on the postexecute part of a click otherview the app will crash with an error
+        //test_input = (TextView) findViewById(R.id.textinput);
+        //server_connection = (TextView) findViewById(R.id.server_connection);
 
 
         // Set the listeners so that the buttons can be used for event handling.
@@ -96,6 +102,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     // Called to perform work in a worker thread.
     // Calls SUMO.
     private class ConnectTask extends AsyncTask<Void, Void, Boolean> {
+        int flag_connection = 1;
         protected Boolean doInBackground(Void... params) {
             if (ping == false) {
                 try {
@@ -103,6 +110,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     out = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
                     in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
                     ping = true;
+                    flag_connection = 2;
+                    Log.i("before", "before print");
+                    //server_connection.setText("testing");
+                    Log.i("test","text");
+
                 } catch (UnknownHostException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
@@ -114,12 +126,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             return ping;
         }
         protected void onPostExecute(Boolean result) {
+           server_connection = (TextView) findViewById(R.id.server_connection);
+           if(flag_connection == 2)
+           {
+               server_connection.setText("CONNECTED TO SERVER");
+           }
+           else
+           {
+               server_connection.setText("NO PING SUCCESS");
+           }
+           flag_connection =1;
         }
     }
 
     // Called to perform work in a worker thread.
-    private class PaintRed extends AsyncTask<Void, Void, Void> {
-        protected Void doInBackground(Void... params) {
+    private class PaintRed extends AsyncTask<Void, Void, Boolean> {
+        protected Boolean doInBackground(Void... params) {
             if (ping == true) {
                 try {
                     out.write("red");
@@ -131,13 +153,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
             return null;
         }
-        protected void onPostExecute(Void... result) {
+        protected void onPostExecute(Boolean result) {
+            test_input = (TextView) findViewById(R.id.textinput);
+            test_input.setText("TESTING OF red BUTTON");
+            TextView editing = (TextView) findViewById(R.id.server_connection);
+            editing.setText("EDITED FROM red BUTTON INPUT");
         }
     }
 
     // Called to perform work in a worker thread.
-    private class PaintOrange extends AsyncTask<Void, Void, Void> {
-        protected Void doInBackground(Void... params) {
+    private class PaintOrange extends AsyncTask<Void, Void, Boolean> {
+        protected Boolean doInBackground(Void... params) {
             if (ping == true) {
                 try {
                     out.write("orange");
@@ -149,13 +175,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
             return null;
         }
-        protected void onPostExecute(Void... result) {
+        protected void onPostExecute(Boolean result) {
+            test_input = (TextView) findViewById(R.id.textinput);
+            test_input.setText("TESTING OF orange BUTTON");
+            TextView editing = (TextView) findViewById(R.id.server_connection);
+            editing.setText("EDITED FROM orange BUTTON INPUT");
         }
     }
 
     // Called to perform work in a worker thread.
-    private class PaintYellow extends AsyncTask<Void, Void, Void> {
-        protected Void doInBackground(Void... params) {
+    private class PaintYellow extends AsyncTask<Void, Void, Boolean> {
+        protected Boolean doInBackground(Void... params) {
             if (ping == true) {
                 try {
                     out.write("yellow");
@@ -167,13 +197,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
             return null;
         }
-        protected void onPostExecute(Void... result) {
+        protected void onPostExecute(Boolean result) {
+            test_input = (TextView) findViewById(R.id.textinput);
+            test_input.setText("TESTING OF yellow BUTTON");
+            TextView editing = (TextView) findViewById(R.id.server_connection);
+            editing.setText("EDITED FROM yellow BUTTON INPUT");
         }
     }
 
     // Called to perform work in a worker thread.
-    private class PaintGreen extends AsyncTask<Void, Void, Void> {
-        protected Void doInBackground(Void... params) {
+    private class PaintGreen extends AsyncTask<Void, Void, Boolean> {
+        protected Boolean doInBackground(Void... params) {
             if (ping == true) {
                 try {
                     out.write("green");
@@ -185,13 +219,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
             return null;
         }
-        protected void onPostExecute(Void... result) {
+        protected void onPostExecute(Boolean result) {
+            test_input = (TextView) findViewById(R.id.textinput);
+            test_input.setText("TESTING OF green BUTTON");
+            TextView editing = (TextView) findViewById(R.id.server_connection);
+            editing.setText("EDITED FROM green BUTTON INPUT");
         }
     }
 
     // Called to perform work in a worker thread.
-    private class PaintBlue extends AsyncTask<Void, Void, Void> {
-        protected Void doInBackground(Void... params) {
+    private class PaintBlue extends AsyncTask<Void, Void, Boolean> {
+        protected Boolean doInBackground(Void... params) {
             if (ping == true) {
                 try {
                     out.write("blue");
@@ -203,37 +241,39 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
             return null;
         }
-        protected void onPostExecute(Void... result) {
+        protected void onPostExecute(Boolean result) {
+            test_input = (TextView) findViewById(R.id.textinput);
+            test_input.setText("TESTING OF blue BUTTON");
+            TextView editing1 = (TextView) findViewById(R.id.server_connection);
+            editing1.setText("EDITED FROM blue   INPUT");
         }
     }
 
     // Called to perform work in a worker thread.
-    private class PaintPurple extends AsyncTask<Void, Void, Void> {
-        protected Void doInBackground(Void... params) {
+    private class PaintPurple extends AsyncTask<Void, Void, Boolean> {
+        protected Boolean doInBackground(Void... params) {
             //Ping means connection to server
             if (ping == true) {
                 try {
 
                     out.write("update");
                     out.flush();
-                    test_input.setText("testing");
+                    //test_input.setText("testing");
 
                 } catch (IOException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
             }
-
-            else {
-                //print("test")
-                //test_input.setText("testing");
-                //Log.e("tesxt","text");
-            }
-            test_input.setText("testing");
             return null;
         }
-        protected void onPostExecute(Void... result) {
-            test_input.setText("testing");
+        protected void onPostExecute(Boolean result) {
+            //test_input.setText("testing");
+            test_input = (TextView) findViewById(R.id.textinput);
+            test_input.setText("TESTING OF UPDATE BUTTON");
+            TextView editing = (TextView) findViewById(R.id.server_connection);
+            editing.setText("EDITED FROM Update BUTTON INPUT");
+
         }
     }
 
@@ -256,6 +296,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             return ping;
         }
         protected void onPostExecute(Boolean result) {
+            server_connection = (TextView) findViewById(R.id.server_connection);
+            server_connection.setText("CONNECTION TERMINATED");
         }
     }
 }

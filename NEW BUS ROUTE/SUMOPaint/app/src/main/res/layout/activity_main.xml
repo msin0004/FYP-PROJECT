@@ -132,6 +132,18 @@
                 android:textStyle="bold" />
         </TableRow>
 
+        <TableRow>
+            android:weightSum="1.0">
+            <TextView
+                android:id="@+id/server_connection"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="NOT CONNECTED"
+                android:textColor="@color/colorPrimary"
+                android:textSize="28sp"
+                android:textStyle="bold" />
+        </TableRow>
+
     </TableLayout>
 
     <TableLayout
