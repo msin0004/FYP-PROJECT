@@ -13,6 +13,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -33,6 +34,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Button blue;
     private Button purple;
     private Button hang_up;
+    private TextView test_input;
 
     private Socket clientSocket = null;
     private BufferedWriter out = null;
@@ -53,6 +55,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         blue = (Button) findViewById(R.id.buttonBlue);
         purple = (Button) findViewById(R.id.buttonPurple);
         hang_up = (Button) findViewById(R.id.buttonGoodbyeSUMO);
+
+        //sample code
+        test_input = (TextView) findViewById(R.id.textinput);
+
 
         // Set the listeners so that the buttons can be used for event handling.
         call.setOnClickListener(this);
@@ -204,18 +210,30 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     // Called to perform work in a worker thread.
     private class PaintPurple extends AsyncTask<Void, Void, Void> {
         protected Void doInBackground(Void... params) {
+            //Ping means connection to server
             if (ping == true) {
                 try {
-                    out.write("purple");
+
+                    out.write("update");
                     out.flush();
+                    test_input.setText("testing");
+
                 } catch (IOException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
             }
+
+            else {
+                //print("test")
+                //test_input.setText("testing");
+                //Log.e("tesxt","text");
+            }
+            test_input.setText("testing");
             return null;
         }
         protected void onPostExecute(Void... result) {
+            test_input.setText("testing");
         }
     }
 

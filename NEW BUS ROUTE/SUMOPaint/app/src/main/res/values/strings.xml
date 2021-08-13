@@ -10,7 +10,9 @@
     <string name="colour_yellow">Yellow</string>
     <string name="colour_green">Green</string>
     <string name="colour_blue">Blue</string>
-    <string name="colour_purple">Purple</string>
+    <string name="colour_purple">UPDATE</string>
+
+    <string name="testing_string">Testing 1</string>
 
     <string name="imageView_empty_logo_description">No Logo</string>
     <string name="imageView_Monash_University_logo_description">Monash University Logo</string>

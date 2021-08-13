@@ -114,10 +114,22 @@
                 android:layout_marginTop="@dimen/vertical_margin_medium"
                 android:layout_marginEnd="@dimen/horizontal_margin_medium"
                 android:layout_marginRight="@dimen/horizontal_margin_medium"
-                android:layout_marginBottom="@dimen/vertical_margin_medium">
+                android:layout_marginBottom="@dimen/vertical_margin_medium"/>
 
-            </RelativeLayout>
 
+        </TableRow>
+
+
+        <TableRow>
+            android:weightSum="1.0">
+            <TextView
+                android:id="@+id/textinput"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="teno"
+                android:textColor="@color/colorPrimary"
+                android:textSize="28sp"
+                android:textStyle="bold" />
         </TableRow>
 
     </TableLayout>
