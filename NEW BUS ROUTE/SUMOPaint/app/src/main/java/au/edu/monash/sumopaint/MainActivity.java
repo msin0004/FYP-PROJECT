@@ -23,6 +23,9 @@ import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import android.util.Log;
+import android.os.Handler;
+import java.util.Timer;
+import java.util.TimerTask;
 
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
@@ -43,6 +46,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private BufferedWriter out = null;
     private BufferedReader in = null;
     private Boolean ping = false;
+    private String incoming = null;
+    private Timer listenTimer;
+    private Handler handler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,6 +81,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         blue.setOnClickListener(this);
         purple.setOnClickListener(this);
         hang_up.setOnClickListener(this);
+
+        handler = new Handler();
     }
 
     // onClick is called when a view has been clicked.
@@ -82,6 +90,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) { // Parameter v stands for the view that was clicked.
         if(v.getId() == R.id.buttonHelloSUMO) { // getId() returns the view's identifier
             new ConnectTask().execute();
+
         } else if(v.getId() == R.id.buttonRed) {
             new PaintRed().execute();
         } else if(v.getId() == R.id.buttonOrange) {
@@ -94,10 +103,69 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             new PaintBlue().execute();
         } else if(v.getId() == R.id.buttonPurple) {
             new PaintPurple().execute();
+            final Handler handler = new Handler();
+            listenTimer = new Timer();
+            incoming = null;
+
+            TimerTask doAsynchronousTask = new TimerTask() {
+                @Override
+                public void run() {
+                    handler.post(new Runnable() {
+                        public void run() {
+                            try {
+                                ListenTask performBackgroundTask = new ListenTask();
+                                performBackgroundTask.execute(ping);
+                            } catch (Exception e) {
+                                // TODO Auto-generated catch block
+                            }
+                        }
+                    });
+                }
+            };
+            listenTimer.schedule(doAsynchronousTask, 100, 1000);
         } else if(v.getId() == R.id.buttonGoodbyeSUMO) {
             new DisconnectTask().execute();
         }
     }
+
+
+    private class ListenTask extends AsyncTask<Boolean, Void, String> {
+        protected String doInBackground(Boolean... params) {
+            if (ping == true) {
+                try {
+                    Log.i("listen","before the incoming");
+                    if(in.ready()) {
+                        Log.i("ready","inside ready");
+                        incoming = in.readLine();
+                        if (incoming != null) {
+                            Log.i("if null","not null ");
+                        } else {
+                            Log.i("if null"," is null ");
+                            return incoming;
+                        }
+                    }
+                   //incoming = in.readLine();
+                   // String temp = in.readLine();
+                    Log.i("listen","afeter the incoming");
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            } else if (ping == false) {
+                Log.i("listen","before the incoming");
+                listenTimer.cancel();
+                incoming = "ping = false";
+            }
+            return incoming;
+        }
+        protected void onPostExecute(String result) {
+            test_input = (TextView) findViewById(R.id.textinput);
+            test_input.setText(result);
+        }
+    }
+
+
+
 
     // Called to perform work in a worker thread.
     // Calls SUMO.
@@ -251,29 +319,76 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     // Called to perform work in a worker thread.
     private class PaintPurple extends AsyncTask<Void, Void, Boolean> {
+       // String message = "";
+        //char[] buffer1 = new char[2048];
+       // int test = 0;
+
         protected Boolean doInBackground(Void... params) {
             //Ping means connection to server
-            if (ping == true) {
+            if (ping) {
                 try {
-
+                    Log.i("before", "updating");
                     out.write("update");
                     out.flush();
+                    Log.i("after", "updating");
                     //test_input.setText("testing");
 
                 } catch (IOException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
+                /*
+                    Log.i("before", "reading");
+                    //message = in.readLine();
+
+                    Log.i("after", "reading");
+                    //test_input.setText(test);
+                    Log.i("output", String.valueOf(test));
+                    /*
+
+                    SO in.read provides a integer input from the
+
+                    */
+
+
+
             }
             return null;
         }
         protected void onPostExecute(Boolean result) {
             //test_input.setText("testing");
-            test_input = (TextView) findViewById(R.id.textinput);
-            test_input.setText("TESTING OF UPDATE BUTTON");
-            TextView editing = (TextView) findViewById(R.id.server_connection);
-            editing.setText("EDITED FROM Update BUTTON INPUT");
+           // test_input = (TextView) findViewById(R.id.textinput);
+           // test_input.setText("TESTING OF UPDATE BUTTON");
+           // TextView editing = (TextView) findViewById(R.id.server_connection);
+           // editing.setText("EDITED FROM Update BUTTON INPUT");
+           // char[] buffer = new char[2048];
+           // String message = "";
+/*          try{
+                //message = String.valueOf(in.read(buffer));
+                //message = in.readLine();
+                //message = in.readUTF();
+               // test_input.setText(message);
+            }catch(IOException e){
+                e.printStackTrace();
+            }
 
+*/
+            /*
+            try {
+                Log.i("before", "reading");
+                //message = in.readLine();
+                //test = in.read(buffer1, 0, 2048);
+               // test = in.read(buffer1, 0, 2048);
+                Log.i("after", "reading");
+                Log.i("after_test", String.valueOf(buffer1));
+                message = String.valueOf(buffer1);
+                //test_input.setText(message);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+*/
+
+            //test_input.setText(test);
         }
     }
 
