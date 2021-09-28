@@ -23,6 +23,31 @@
         android:layout_marginEnd="@dimen/horizontal_margin_small">
 
         <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" >
+
+            <TextView
+                android:id="@+id/textViewConsoleTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/text_colour"
+                android:textColor="#000000"
+                android:textSize="30sp"
+                android:textStyle="bold" />
+
+        </TableRow>
+
+        <TableRow
+            android:weightSum="1.0"
+            android:layout_height="wrap_content">
+
+            <Space
+                android:layout_width="wrap_content"
+                android:layout_height="10.0dp" />
+        </TableRow>
+
+        <TableRow
+            android:layout_height="117dp"
             android:weightSum="1.0">
 
             <Button
@@ -57,15 +82,6 @@
                 android:text="@string/colour_yellow"
                 android:textSize="20sp"
                 tools:ignore="ButtonStyle" />
-
-            <TextView
-                android:id="@+id/textViewConsoleTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/text_colour"
-                android:textColor="#000000"
-                android:textSize="28sp"
-                android:textStyle="bold" />
 
         </TableRow>
 
@@ -105,17 +121,6 @@
                 android:textSize="20sp"
                 tools:ignore="ButtonStyle" />
 
-            <RelativeLayout
-                android:id="@+id/relativeLayoutPaintTitle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/horizontal_margin_medium"
-                android:layout_marginLeft="@dimen/horizontal_margin_medium"
-                android:layout_marginTop="@dimen/vertical_margin_medium"
-                android:layout_marginEnd="@dimen/horizontal_margin_medium"
-                android:layout_marginRight="@dimen/horizontal_margin_medium"
-                android:layout_marginBottom="@dimen/vertical_margin_medium"/>
-
 
         </TableRow>
 
@@ -134,6 +139,7 @@
 
         <TableRow>
             android:weightSum="1.0">
+
             <TextView
                 android:id="@+id/server_connection"
                 android:layout_width="wrap_content"
@@ -145,6 +151,10 @@
         </TableRow>
 
     </TableLayout>
+
+    <Space
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 
     <TableLayout
         android:id="@+id/tableLayoutLogos"
@@ -168,41 +178,56 @@
 
             <Button
                 android:id="@+id/buttonHelloSUMO"
-                android:layout_width="0dp"
+                android:layout_width="10dp"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/vertical_margin_extra_large"
                 android:layout_column="0"
                 android:layout_gravity="center_vertical"
+                android:layout_marginBottom="@dimen/vertical_margin_extra_large"
                 android:layout_weight="0.5"
                 android:text="@string/hello_world"
-                android:textSize="20sp"
-                style="?android:attr/borderlessButtonStyle"/>
+                android:textSize="20sp" />
 
             <Button
                 android:id="@+id/buttonGoodbyeSUMO"
-                android:layout_width="0dp"
+                android:layout_width="10dp"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/vertical_margin_extra_large"
                 android:layout_column="1"
                 android:layout_gravity="center_vertical"
+                android:layout_marginBottom="@dimen/vertical_margin_extra_large"
                 android:layout_weight="0.5"
                 android:text="@string/goodbye_world"
-                android:textSize="20sp"
-                style="?android:attr/borderlessButtonStyle"/>
+                android:textSize="20sp" />
+
+            <Button
+                android:id="@+id/refresh"
+                android:layout_width="10dp"
+                android:layout_height="wrap_content"
+                android:layout_column="2"
+                android:layout_gravity="center_vertical"
+                android:layout_marginBottom="@dimen/vertical_margin_extra_large"
+                android:layout_weight="0.5"
+                android:text="Refresh"
+                android:textSize="20sp" />
+
 
         </TableRow>
 
         <TableRow
             android:weightSum="1.0">
 
-            <ImageView
-                android:id="@+id/imageViewEmpty"
+
+            <TextView
+                android:id="@+id/server_connect"
                 android:layout_width="0dp"
                 android:layout_height="48dp"
                 android:layout_column="0"
                 android:layout_gravity="center_vertical"
                 android:layout_weight="0.5"
-                android:contentDescription="@string/imageView_empty_logo_description"/>
+                android:text="Not Connected"
+                android:textColor="@color/colorPrimary"
+                android:textSize="28sp"
+                android:textStyle="bold"/>
+
 
             <ImageView
                 android:id="@+id/imageViewMonash"
@@ -217,5 +242,9 @@
         </TableRow>
 
     </TableLayout>
+
+    <Space
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 
 </RelativeLayout>

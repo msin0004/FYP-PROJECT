@@ -1,19 +1,28 @@
 <resources>
     <string name="app_name">SUMOPaint</string>
 
-    <string name="hello_world">Hello, SUMO!</string>
-    <string name="goodbye_world">Goodbye, SUMO!</string>
+    <string name="hello_world">Connect to Server</string>
+    <string name="goodbye_world">Close Server</string>
 
-    <string name="text_colour">Paint the Vehicle:</string>
+    <string name="text_colour">Welcome to Bus Decisions</string>
     <string name="colour_red">Red</string>
     <string name="colour_orange">Orange</string>
     <string name="colour_yellow">Yellow</string>
     <string name="colour_green">Green</string>
-    <string name="colour_blue">Blue</string>
+    <string name="colour_blue">New Page</string>
     <string name="colour_purple">UPDATE</string>
 
     <string name="testing_string">Testing 1</string>
 
     <string name="imageView_empty_logo_description">No Logo</string>
     <string name="imageView_Monash_University_logo_description">Monash University Logo</string>
+    <string name="title_activity_show_details">showDetails</string>
+    <!-- Strings used for fragments for navigation -->
+    <string name="first_fragment_label">First Fragment</string>
+    <string name="second_fragment_label">Second Fragment</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+
+    <string name="hello_first_fragment">Hello first fragment</string>
+    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
 </resources>
