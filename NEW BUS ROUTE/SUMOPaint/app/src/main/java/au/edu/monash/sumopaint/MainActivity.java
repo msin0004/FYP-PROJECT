@@ -110,7 +110,26 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
             new PaintPurple().execute();
+            final Handler handler = new Handler();
+            listenTimer = new Timer();
+            incoming = null;
 
+            TimerTask doAsynchronousTask = new TimerTask() {
+                @Override
+                public void run() {
+                    handler.post(new Runnable() {
+                        public void run() {
+                            try {
+                                ListenTask performBackgroundTask = new ListenTask();
+                                performBackgroundTask.execute(ping);
+                            } catch (Exception e) {
+                                // TODO Auto-generated catch block
+                            }
+                        }
+                    });
+                }
+            };
+            listenTimer.schedule(doAsynchronousTask, 100, 1000);
         } else if(v.getId() == R.id.buttonGoodbyeSUMO) {
             new DisconnectTask().execute();
         }

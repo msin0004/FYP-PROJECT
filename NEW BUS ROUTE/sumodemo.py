@@ -141,6 +141,11 @@ if __name__ == '__main__':
 	thread = Process(target=server, args=(d, temp, central_authority_broadcast)) # represents a task (i.e. the server program) running in a subprocess
 
 
+	manager = Manager()
+	central_authority_broadcast = manager.list()
+	thread = Process(target=server, args=(d,central_authority_broadcast)) # represents a task (i.e. the server program) running in a subprocess
+
+
 	print()
 	print('===========================')
 	print('Beginning the main program.')
