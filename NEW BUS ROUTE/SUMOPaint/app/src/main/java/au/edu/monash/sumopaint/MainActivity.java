@@ -110,7 +110,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
             new PaintPurple().execute();
-            final Handler handler = new Handler();
+            //final Handler handler = new Handler();
             listenTimer = new Timer();
             incoming = null;
 
@@ -143,7 +143,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     Log.i("listen","before the incoming");
                     if(in.ready()) {
                         Log.i("ready","inside ready");
-                        incoming = in.readLine();
+                        incoming = String.valueOf(in.readLine());
                         if (incoming != null) {
                             Log.i("if null","not null ");
                         } else {

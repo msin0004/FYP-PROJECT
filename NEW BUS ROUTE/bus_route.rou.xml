@@ -70,7 +70,7 @@
 
 -->
   <!--  OPTION 2  -->
-	<personFlow id="BusPerson_0" begin="0" end="9000" personsPerHour="60" departPos="37">
+	<personFlow id="BusPerson_0" begin="0" end="9000" personsPerHour="180" departPos="37">
 		<ride from="-787851477" busStop="r1s8" lines="bus"/>
 	</personFlow>
 

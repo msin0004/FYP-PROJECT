@@ -64,17 +64,17 @@ def server(data,temp,central_authority_broadcast):
 				client_socket.send(message.encode())
 				#print(central_authority_broadcast[realVehicleIndex] + '\n')
 			if (incoming == 'send'):
-				global sending_data
-				print("sending data print in incoming\n")
-				print(temp.value)
-				print("sending data print after incoming\n")
+				#global sending_data
+				#print("sending data print in incoming\n")
+				#print(temp.value)
+				#print("sending data print after incoming\n")
 				message = str(temp.value)
-				print("darta val")
-				print(data.value)
-				print("data val end")
+				#print("darta val")
+				#print(data.value)
+				#print("data val end")
 				print("message being sent")
 				print(message)
-				print("message being sent end")
+				#print("message being sent end")
 				client_socket.send(message.encode())
 				print("data sent")
 
@@ -141,9 +141,9 @@ if __name__ == '__main__':
 	thread = Process(target=server, args=(d, temp, central_authority_broadcast)) # represents a task (i.e. the server program) running in a subprocess
 
 
-	manager = Manager()
-	central_authority_broadcast = manager.list()
-	thread = Process(target=server, args=(d,central_authority_broadcast)) # represents a task (i.e. the server program) running in a subprocess
+	#manager = Manager()
+	#central_authority_broadcast = manager.list()
+	#thread = Process(target=server, args=(d,central_authority_broadcast)) # represents a task (i.e. the server program) running in a subprocess
 
 
 	print()
@@ -188,7 +188,7 @@ if __name__ == '__main__':
 		#print('Current value of d: {}'.format(d.value))
 		#print(traci.simulation.getLoadedIDList())
 		if step > 3000:
-			print(temp.value)
+			#print(temp.value)
 			#central_authority_broadcast.append = 'test'
 			#print(central_authority_broadcast[0])
 
@@ -248,10 +248,10 @@ if __name__ == '__main__':
 			#	print(d)
 			#print(d.value)
 			if(d.value == 1):
-				print("sending data printing")
-				print(sending_data)
-				print("sending data printed now message")
-				message = "hello \n"
+				#print("sending data printing")
+				#print(sending_data)
+				#print("sending data printed now message")
+				message = "passengers = " + str(occupied) + '\n'
 				sending_data = message
 				if t == 0:
 					temp.value = message
@@ -261,14 +261,17 @@ if __name__ == '__main__':
 					temp.value = message
 					t = t+1
 				elif t == 2:
-					message = "1"
-					temp.value = str(message)
+					message = 23
+					temp.value = str(message) + '\n'
+					print("printing message as a number into string")
+					print(temp.value)
+					print("end print")
 					t = 0
-				print()
+				#print()
 				#temp.value = occupied
-				print(occupied)
-				print(temp.value)
-				print("sending data printed change")
+				#print(occupied)
+				#print(temp.value)
+				print("end of main")
 				d.value = 9
 
 		# go to the next time step
