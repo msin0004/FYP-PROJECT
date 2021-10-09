@@ -25,4 +25,12 @@
 
     <string name="hello_first_fragment">Hello first fragment</string>
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+
+    <string name="long_string">
+        Hello World\n this is a test string\n it is testing the scrollable of the program\n
+        this string is still going\n it is never ending
+        this is fun
+        have fun
+        goodbye
+    </string>
 </resources>

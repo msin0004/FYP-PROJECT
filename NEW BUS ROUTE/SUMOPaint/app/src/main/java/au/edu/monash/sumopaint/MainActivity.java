@@ -15,6 +15,8 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
+import android.widget.SpinnerAdapter;
+import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 
 import java.io.BufferedReader;
@@ -53,11 +55,33 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     //private int inflag = 0;
     private Timer listenTimer;
     private Handler handler;
-    private String[] items = new String[]{"Stop 1", "Stop 2", "Stop 3", "Stop 4", "Stop 5", "Stop 6", "Stop 7", "practise"};
+    private String[] stops = new String[]{"Stop 1", "Stop 2", "Stop 3", "Stop 4", "Stop 5", "Stop 6", "Stop 7", "practise"};
+    private String[] busses = new String[]{"Bus 1", "Bus 2", "Bus 3"};
     private String stop = null; //stop value to get data on
+    private String bus_decision = null;
     private String get = "receive"; //variable that requests data from server to be sent
     private String send = null; //variable that stores data being sent to server
     //private Spinner spinner;
+
+    //flags
+    private int flag_connection = 0;
+    private String instruction = null;
+
+    //variables from server to print on device
+    private String ETA = "ETA";
+    private String Pass = "Passengers onboard";
+    private String Seats = "Seats available";
+    private String ETA_val = null;
+    private String Pass_val = null;
+    private String Seats_val = null;
+    private String Bus1 = "BUS 1";
+    private String Bus2 = "BUS 2";
+    private String Bus3 = "BUS 3";
+    //private String bus_no = null;
+
+    //loop to initialise the bus information
+    private Integer bus_no = 0;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,15 +90,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         // Initialise the UI components.
         Button call = (Button) findViewById(R.id.buttonHelloSUMO);
+        /*
         Button red = (Button) findViewById(R.id.buttonRed);
         Button orange = (Button) findViewById(R.id.buttonOrange);
         Button yellow = (Button) findViewById(R.id.buttonYellow);
         Button green = (Button) findViewById(R.id.buttonGreen);
         Button blue = (Button) findViewById(R.id.buttonBlue);
-        Button purple = (Button) findViewById(R.id.buttonPurple);
-        Button hang_up = (Button) findViewById(R.id.buttonGoodbyeSUMO);
+        */
+        Button refresh = (Button) findViewById(R.id.refresh);
+       // Button hang_up = (Button) findViewById(R.id.buttonGoodbyeSUMO);
         Button go_button = (Button) findViewById(R.id.buttongo);
+        Button send = (Button) findViewById(R.id.buttonsend);
         Spinner spinner = (Spinner)findViewById(R.id.spinners);
+       Spinner bus_option = (Spinner)findViewById(R.id.select_bus);
 
         //sample code
         //NOTE
@@ -82,18 +110,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //test_input = (TextView) findViewById(R.id.textinput);
         //server_connection = (TextView) findViewById(R.id.server_connection);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(MainActivity.this,
-                android.R.layout.simple_spinner_item,items);
+                android.R.layout.simple_spinner_item,stops);
         spinner.setAdapter(adapter);
+        ArrayAdapter<String> adapter_1 = new ArrayAdapter<String>(MainActivity.this,
+                android.R.layout.simple_spinner_item,busses);
+        bus_option.setAdapter(adapter_1);
 
         // Set the listeners so that the buttons can be used for event handling.
         call.setOnClickListener(this);
+        /*
         red.setOnClickListener(this);
         orange.setOnClickListener(this);
         yellow.setOnClickListener(this);
         green.setOnClickListener(this);
         blue.setOnClickListener(this);
-        purple.setOnClickListener(this);
-        hang_up.setOnClickListener(this);
+         */
+        refresh.setOnClickListener(this);
+        //hang_up.setOnClickListener(this);
         go_button.setOnClickListener(this);
         //spinner.setOnItemSelectedListener(this);
 
@@ -105,14 +138,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) { // Parameter v stands for the view that was clicked.
         final Handler handler = new Handler();
 
-        //get value from spinner
-        Spinner spinner = (Spinner)findViewById(R.id.spinners);
-        stop = spinner.getSelectedItem().toString();  //STORE STOP VALUE SELECTED INTO STOP VARIABLE
+
 
         if(v.getId() == R.id.buttonHelloSUMO) { // getId() returns the view's identifier
-            new ConnectTask().execute();
+            if(ping == false)
+            {
+                new ConnectTask().execute();
+            }
+            else if(ping == true)
+            {
+                flag_connection = 0;
+                new DisconnectTask().execute();
+            }
 
-        } else if(v.getId() == R.id.buttonRed) {
+        }
+        /*else if(v.getId() == R.id.buttonRed) {
             new PaintRed().execute();
         } else if(v.getId() == R.id.buttonOrange) {
             new PaintOrange().execute();
@@ -123,12 +163,29 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         } else if(v.getId() == R.id.buttonBlue) {
             new PaintBlue().execute();
             //new page button
-        } else if(v.getId() == R.id.buttonPurple) {
+
+        }*/
+
+        else if(v.getId() == R.id.buttongo)
+        {
+            //get value from spinner
+            Spinner spinner = (Spinner)findViewById(R.id.spinners);
+            stop = spinner.getSelectedItem().toString();  //STORE STOP VALUE SELECTED INTO STOP VARIABLE
+            new Getdata().execute();
+        }
+        else if(v.getId() == R.id.buttonsend)
+        {
+            Spinner bus_option = (Spinner)findViewById(R.id.select_bus);
+            bus_decision = bus_option.getSelectedItem().toString();
+        }
+
+
+        else if(v.getId() == R.id.refresh) {
 
             //incoming = null;
 
 
-            new PaintPurple().execute();
+            new Refresh().execute();
             //final Handler handler = new Handler();
             listenTimer = new Timer();
             incoming = null;
@@ -149,9 +206,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
             };
             listenTimer.schedule(doAsynchronousTask, 100, 1000);
-        } else if(v.getId() == R.id.buttonGoodbyeSUMO) {
-            new DisconnectTask().execute();
         }
+
     }
 
 
@@ -187,7 +243,97 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Log.i("listen", "post execute");
             //test_input = (TextView) findViewById(R.id.textinput);
             //test_input.setText(result);
-            var_testing = "LSITEN FOR TESTING";
+
+            if(instruction == "bus_no")
+            {
+
+                TextView testing = (TextView) findViewById(R.id.businput1_empty);
+                testing.setText(result);
+
+                bus_no = Integer.parseInt(incoming);
+                TextView bus1_name = (TextView) findViewById(R.id.businput1_name);
+                TextView bus1_eta = (TextView) findViewById(R.id.businput1_ETA);
+                TextView bus1_pass = (TextView) findViewById(R.id.businput1_Occupancy);
+                TextView bus1_seat = (TextView) findViewById(R.id.businput1_Seats);
+                TextView bus2_name = (TextView) findViewById(R.id.businput2_name);
+                TextView bus2_eta = (TextView) findViewById(R.id.businput2_ETA);
+                TextView bus2_pass = (TextView) findViewById(R.id.businput2_Occupancy);
+                TextView bus2_seat = (TextView) findViewById(R.id.businput2_Seats);
+                TextView bus3_name = (TextView) findViewById(R.id.businput3_name);
+                TextView bus3_eta = (TextView) findViewById(R.id.businput3_ETA);
+                TextView bus3_pass = (TextView) findViewById(R.id.businput3_Occupancy);
+                TextView bus3_seat = (TextView) findViewById(R.id.businput3_Seats);
+
+                if(bus_no == 0)
+                {
+                    bus1_name.setText("");
+                    bus1_eta.setText("");
+                    bus1_pass.setText("");
+                    bus1_seat.setText("");
+                    bus2_name.setText("");
+                    bus2_eta.setText("");
+                    bus2_pass.setText("");
+                    bus2_seat.setText("");
+                    bus3_name.setText("");
+                    bus3_eta.setText("");
+                    bus3_pass.setText("");
+                    bus3_seat.setText("");
+                }
+
+               if(bus_no == 1)
+               {
+                   testing.setText(result);
+                   bus1_name.setText(Bus1);
+                   bus1_eta.setText(ETA);
+                   bus1_pass.setText(Pass);
+                   bus1_seat.setText(Seats);
+                   bus2_name.setText("");
+                   bus2_eta.setText("");
+                   bus2_pass.setText("");
+                   bus2_seat.setText("");
+                   bus3_name.setText("");
+                   bus3_eta.setText("");
+                   bus3_pass.setText("");
+                   bus3_seat.setText("");
+
+               }
+               if(bus_no == 2)
+               {
+                   bus1_name.setText(Bus1);
+                   bus1_eta.setText(ETA);
+                   bus1_pass.setText(Pass);
+                   bus1_seat.setText(Seats);
+                   bus2_name.setText(Bus2);
+                   bus2_eta.setText(ETA);
+                   bus2_pass.setText(Pass);
+                   bus2_seat.setText(Seats);
+                   bus3_name.setText("");
+                   bus3_eta.setText("");
+                   bus3_pass.setText("");
+                   bus3_seat.setText("");
+               }
+               if(bus_no == 3)
+               {
+                   bus1_name.setText(Bus1);
+                   bus1_eta.setText(ETA);
+                   bus1_pass.setText(Pass);
+                   bus1_seat.setText(Seats);
+                   bus2_name.setText(Bus2);
+                   bus2_eta.setText(ETA);
+                   bus2_pass.setText(Pass);
+                   bus2_seat.setText(Seats);
+                   bus3_name.setText(Bus3);
+                   bus3_eta.setText(ETA);
+                   bus3_pass.setText(Pass);
+                   bus3_seat.setText(Seats);
+               }
+            }
+
+
+
+
+
+
         }
     }
 
@@ -197,7 +343,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     // Called to perform work in a worker thread.
     // Calls SUMO.
     private class ConnectTask extends AsyncTask<Void, Void, Boolean> {
-        int flag_connection = 1;
         protected Boolean doInBackground(Void... params) {
             if (ping == false) {
                 try {
@@ -205,7 +350,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     out = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
                     in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
                     ping = true;
-                    flag_connection = 2;
+                    flag_connection = 1;
                     Log.i("before", "before print");
                     //server_connection.setText("testing");
                     Log.i("test","text");
@@ -221,102 +366,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             return ping;
         }
         protected void onPostExecute(Boolean result) {
+            //added functionality to view connection status of the device to the server
            server_connection = (TextView) findViewById(R.id.server_connect);
-           if(flag_connection == 2)
+           Button connect = (Button) findViewById(R.id.buttonHelloSUMO);
+           if(flag_connection == 1)
            {
                server_connection.setText("Connected");
+               connect.setText("Close Server");
            }
-           else
-           {
-               server_connection.setText("Not Connected");
-           }
-           flag_connection =1;
+           flag_connection = 1;
         }
     }
 
     // Called to perform work in a worker thread.
-    private class PaintRed extends AsyncTask<Void, Void, String> {
+    private class Getdata extends AsyncTask<Void, Void, String> {
         protected String doInBackground(Void... params) {
-            if (ping == true) {
-                try {
-                    out.write("stop7");
-                    out.flush();
-                    Log.i("red", "post stop7");
-                    try
-                    {
-                        Thread.sleep(  1000 );
-                    }
-                    catch ( InterruptedException e )
-                    {
-                        e.printStackTrace();
-                    }
-
-                    out.write("send");
-                    out.flush();
-                    Log.i("red", "post send");
-                } catch (IOException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-            }
-
-            listenTimer = new Timer();
-            //incoming = null; //set the incoming to null before receiving new data
-
-            TimerTask doAsynchronousTask = new TimerTask() {
-                @Override
-                public void run() {
-                    handler.post(new Runnable() {
-                        public void run() {
-                            try {
-                                ListenTask performBackgroundTask = new ListenTask();
-                                performBackgroundTask.execute(ping);
-                            } catch (Exception e) {
-                                // TODO Auto-generated catch block
-                            }
-                        }
-                    });
-                }
-            };
-            listenTimer.schedule(doAsynchronousTask, 100, 1000);
-            Log.i("red", "post listen");
-            return incoming;
-
-        }
-        protected void onPostExecute(String result) {
-            Log.i("red", "post execute");
-            test_input = (TextView) findViewById(R.id.textinput);
-            test_input.setText(result);
-            TextView testing = (TextView) findViewById(R.id.server_connection);
-            testing.setText(var_testing);
-        }
-    }
-
-    // Called to perform work in a worker thread.
-    private class PaintOrange extends AsyncTask<Void, Void, Boolean> {
-        protected Boolean doInBackground(Void... params) {
-            if (ping == true) {
-                try {
-                    out.write("orange");
-                    out.flush();
-                } catch (IOException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-            }
-            return null;
-        }
-        protected void onPostExecute(Boolean result) {
-            test_input = (TextView) findViewById(R.id.textinput);
-            test_input.setText("TESTING OF orange BUTTON");
-            TextView editing = (TextView) findViewById(R.id.server_connect);
-            editing.setText("EDITED FROM orange BUTTON INPUT");
-        }
-    }
-
-    // Called to perform work in a worker thread.
-    private class Getdata extends AsyncTask<Void, Void, Boolean> {
-        protected Boolean doInBackground(Void... params) {
             if (ping == true) {
                 try {
                     //checking if stop is null
@@ -336,8 +400,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         }
 
                         //request server for data relating to previous write command
-                        out.write(get);
+                        out.write("bus_no");
                         out.flush();
+                        instruction = "bus_no";
                     }
 
                 } catch (IOException e) {
@@ -345,54 +410,41 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     e.printStackTrace();
                 }
             }
-            return null;
-        }
-        protected void onPostExecute(Boolean result) {
-            test_input = (TextView) findViewById(R.id.textinput);
-            test_input.setText(stop);
 
-        }
-    }
-
-    // Called to perform work in a worker thread.
-    private class PaintGreen extends AsyncTask<Void, Void, Boolean> {
-        protected Boolean doInBackground(Void... params) {
-            if (ping == true) {
-                try {
-                    out.write("green");
-                    out.flush();
-                } catch (IOException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
+            listenTimer = new Timer();
+            //incoming = null; //set the incoming to null before receiving new data
+            TimerTask doAsynchronousTask = new TimerTask() {
+                @Override
+                public void run() {
+                    handler.post(new Runnable() {
+                        public void run() {
+                            try {
+                                ListenTask performBackgroundTask = new ListenTask();
+                                performBackgroundTask.execute(ping);
+                            } catch (Exception e) {
+                                // TODO Auto-generated catch block
+                            }
+                        }
+                    });
                 }
-            }
-            return null;
+            };
+            listenTimer.schedule(doAsynchronousTask, 100, 1000);
+            Log.i("red", "post listen");
+
+            return incoming;
         }
         protected void onPostExecute(Boolean result) {
-            test_input = (TextView) findViewById(R.id.textinput);
-            test_input.setText("TESTING OF green BUTTON");
-            TextView editing = (TextView) findViewById(R.id.server_connection);
-            editing.setText("EDITED FROM green BUTTON INPUT");
+          //  test_input = (TextView) findViewById(R.id.businput1_name);
+          //  test_input.setText(stop);
+
         }
     }
 
     // Called to perform work in a worker thread.
-    private class PaintBlue extends AsyncTask<Void, Void, Boolean> {
-        protected Boolean doInBackground(Void... params) {
-
-            return null;
-        }
-        protected void onPostExecute(Boolean result) {
-            Intent intent = new Intent(MainActivity.this, showDetails.class);
-            startActivity(intent);
-        }
-    }
-
-    // Called to perform work in a worker thread.
-    private class PaintPurple extends AsyncTask<Void, Void, String> {
-       // String message = "";
+    private class Refresh extends AsyncTask<Void, Void, String> {
+        // String message = "";
         //char[] buffer1 = new char[2048];
-       // int test = 0;
+        // int test = 0;
 
         protected String doInBackground(Void... params) {
             //Ping means connection to server
@@ -447,12 +499,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
         protected void onPostExecute(String result) {
             //test_input.setText("testing");
-           // test_input = (TextView) findViewById(R.id.textinput);
-           // test_input.setText("TESTING OF UPDATE BUTTON");
-           // TextView editing = (TextView) findViewById(R.id.server_connection);
-           // editing.setText("EDITED FROM Update BUTTON INPUT");
-           // char[] buffer = new char[2048];
-           // String message = "";
+            // test_input = (TextView) findViewById(R.id.textinput);
+            // test_input.setText("TESTING OF UPDATE BUTTON");
+            // TextView editing = (TextView) findViewById(R.id.server_connection);
+            // editing.setText("EDITED FROM Update BUTTON INPUT");
+            // char[] buffer = new char[2048];
+            // String message = "";
 /*          try{
                 //message = String.valueOf(in.read(buffer));
                 //message = in.readLine();
@@ -483,9 +535,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             //forever loop until
             //Log.i("update", "post execute");
             //while(incoming == null) {
-           // }
+            // }
             //Log.i("update", "after forever loop");
-            test_input = (TextView) findViewById(R.id.textinput);
+            test_input = (TextView) findViewById(R.id.businput1_name);
             test_input.setText(result);
         }
     }
@@ -509,8 +561,127 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             return ping;
         }
         protected void onPostExecute(Boolean result) {
+            //change status and button option
             server_connection = (TextView) findViewById(R.id.server_connect);
             server_connection.setText("Not Connected");
+            Button connect = (Button) findViewById(R.id.buttonHelloSUMO);
+            connect.setText("Connect to Server");
         }
     }
+
+
+    // Called to perform work in a worker thread.
+    private class PaintRed extends AsyncTask<Void, Void, String> {
+        protected String doInBackground(Void... params) {
+            if (ping == true) {
+                try {
+                    out.write("stop7");
+                    out.flush();
+                    Log.i("red", "post stop7");
+                    try
+                    {
+                        Thread.sleep(  1000 );
+                    }
+                    catch ( InterruptedException e )
+                    {
+                        e.printStackTrace();
+                    }
+
+                    out.write("send");
+                    out.flush();
+                    Log.i("red", "post send");
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }
+
+            listenTimer = new Timer();
+            //incoming = null; //set the incoming to null before receiving new data
+            TimerTask doAsynchronousTask = new TimerTask() {
+                @Override
+                public void run() {
+                    handler.post(new Runnable() {
+                        public void run() {
+                            try {
+                                ListenTask performBackgroundTask = new ListenTask();
+                                performBackgroundTask.execute(ping);
+                            } catch (Exception e) {
+                                // TODO Auto-generated catch block
+                            }
+                        }
+                    });
+                }
+            };
+            listenTimer.schedule(doAsynchronousTask, 100, 1000);
+            Log.i("red", "post listen");
+
+            return incoming;
+        }
+        protected void onPostExecute(String result) {
+            Log.i("red", "post execute");
+            test_input = (TextView) findViewById(R.id.businput1_name);
+            test_input.setText(result);
+            TextView testing = (TextView) findViewById(R.id.businput1_empty);
+            testing.setText(var_testing);
+        }
+    }
+
+    // Called to perform work in a worker thread.
+    private class PaintOrange extends AsyncTask<Void, Void, Boolean> {
+        protected Boolean doInBackground(Void... params) {
+            if (ping == true) {
+                try {
+                    out.write("orange");
+                    out.flush();
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }
+            return null;
+        }
+        protected void onPostExecute(Boolean result) {
+            test_input = (TextView) findViewById(R.id.businput1_name);
+            test_input.setText("TESTING OF orange BUTTON");
+            TextView editing = (TextView) findViewById(R.id.server_connect);
+            editing.setText("EDITED FROM orange BUTTON INPUT");
+        }
+    }
+
+
+    // Called to perform work in a worker thread.
+    private class PaintGreen extends AsyncTask<Void, Void, Boolean> {
+        protected Boolean doInBackground(Void... params) {
+            if (ping == true) {
+                try {
+                    out.write("green");
+                    out.flush();
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }
+            return null;
+        }
+        protected void onPostExecute(Boolean result) {
+            test_input = (TextView) findViewById(R.id.businput1_name);
+            test_input.setText("TESTING OF green BUTTON");
+            TextView editing = (TextView) findViewById(R.id.businput1_empty);
+            editing.setText("EDITED FROM green BUTTON INPUT");
+        }
+    }
+
+    // Called to perform work in a worker thread.
+    private class PaintBlue extends AsyncTask<Void, Void, Boolean> {
+        protected Boolean doInBackground(Void... params) {
+
+            return null;
+        }
+        protected void onPostExecute(Boolean result) {
+            Intent intent = new Intent(MainActivity.this, showDetails.class);
+            startActivity(intent);
+        }
+    }
+
 }
