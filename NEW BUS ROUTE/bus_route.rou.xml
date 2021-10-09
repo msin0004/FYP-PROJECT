@@ -60,7 +60,7 @@
 <!--	</vehicle>
 -->
 
-	<flow type="bus" line="bus" id="bus_flow" begin="2" route="busroute" end="9000" vehsPerHour="10"/>
+	<flow type="bus" line="bus" id="bus_flow" begin="2" route="busroute" end="9000" vehsPerHour="25"/>
 
 <!--
         Note
