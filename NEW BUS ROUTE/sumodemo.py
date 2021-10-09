@@ -13,12 +13,12 @@ from ctypes import c_wchar_p
 import socket
 import time
 import threading
-stop = 'stop0'
+#stop = 'stop0'
 sending_data = "sample"
 
 
 # server program:  creates the server, handles incoming calls and subsequent user requests
-def server(data,temp,central_authority_broadcast):
+def server(data,temp,central_authority_broadcast, bus_send, eta_send, pass_send, bus_no, stop, list, bus_info, received):
 	# size of buffer and backlog
 	buffer = 2048 # value should be a relatively small power of 2, e.g. 4096
 	backlog = 1 # tells the operating system to keep a backlog of 1 connection; this means that you can have at most 1 client waiting while the server is handling the current client; the operating system will typically allow a maximum of 5 waiting connections; to cope with this, busy servers need to generate a new thread to handle each incoming connection so that it can quickly serve the queue of waiting clients
@@ -44,11 +44,11 @@ def server(data,temp,central_authority_broadcast):
 			incoming = client_socket.recv(buffer).decode('UTF-8') # receive client data into buffer
 			print("newthread loop")
 			print(incoming)
-			print(data.value)
+			#print(data.value)
 			if (incoming == 'quit'):
 				print("Ending session with client.")
 				client_socket.close() # close the connection with the client
-				central_authority_broadcast[realVehicleIndex] = 'No Advice'
+				#central_authority_broadcast[realVehicleIndex] = 'No Advice'
 				break # breaks out of infinite loop 2
 			if (incoming == 'update'):
 				#print("sending Data")
@@ -56,7 +56,7 @@ def server(data,temp,central_authority_broadcast):
 				#client_socket.send(central_authority_broadcast[realVehicleIndex] + '\n') # send the data to the client
 				message = "test message \n"
 				#central_authority_broadcast[0] = 'testing'
-				print(central_authority_broadcast[0])
+				#print(central_authority_broadcast[0])
 				client_socket.send(message.encode())
 			if (incoming == 'get'):
 				print("sending get data")
@@ -78,36 +78,86 @@ def server(data,temp,central_authority_broadcast):
 				client_socket.send(message.encode())
 				print("data sent")
 
-			if (incoming == 'stop7'):
-				stop = 'stop7'
+				if(temp == 'bus_no'):
+					message = str(bus_no) + '\n'
+					client_socket.send(mesasge.encode())
+
+
+			if (incoming == 'bus_no'):
+				temp.value = ''
+				received['operation'] = ''
+				print("inside bus_no")
+				message = str(bus_no.value) + '\n'
+				client_socket.send(message.encode())
+
+			if (incoming == 'Stop 7'):
+				#stop = 'stop7'
+				print("inside stop 7")
+				stop.value = 7
+				temp.value = 'bus_no'
+				received['stop'] = 7
+				received['operation'] = 'bus_no'
 				#data = "capacity"
-				data.value = 1
-				print("data")
-				print(data.value)
+				#data.value = 1
+				#print("data")
+				#print(data.value)
 #				while data == 'capacity':
 	#				temp = 0
-
-
 				#message = 'testing\n'
 				#client_socket.send(mesasge.encode())
 
-			if (incoming == 'stop1'):
-				stop = 'stop1'
-			if (incoming == 'stop2'):
-				stop = 'stop2'
-			if (incoming == 'stop3'):
-				stop = 'stop3'
-			if (incoming == 'stop4'):
-				stop = 'stop4'
-			if (incoming == 'stop5'):
-				stop = 'stop5'
-			if (incoming == 'stop6'):
-				stop = 'stop6'
-			if (incoming == 'stop8'):
-				stop = 'stop8'
-			if not incoming:
-				stop = 'no incoming'
-				print('no incoming')
+			if (incoming == 'Stop 1'):
+				#stop = 'stop1'
+				print("inside stop 1")
+				stop.value = 1
+				temp.value = 'bus_no'
+				received['stop'] = 1
+				received['operation'] = 'bus_no'
+			if (incoming == 'Stop 2'):
+				#stop = 'stop2'
+				print("inside stop 2")
+				stop.value = 2
+				temp.value = 'bus_no'
+				received['stop'] = 2
+				received['operation'] = 'bus_no'
+			if (incoming == 'Stop 3'):
+				#stop = 'stop3'
+				print("inside stop 3")
+				stop.value = 3
+				temp.value = 'bus_no'
+				received['stop'] = 3
+				received['operation'] = 'bus_no'
+			if (incoming == 'Stop 4'):
+				#stop = 'stop4'
+				print("inside stop 4")
+				stop.value = 4
+				temp.value = 'bus_no'
+				received['stop'] = 4
+				received['operation'] = 'bus_no'
+			if (incoming == 'Stop 5'):
+				#stop = 'stop5'
+				print("inside stop 5")
+				stop.value = 5
+				temp.value = 'bus_no'
+				received['stop'] = 5
+				received['operation'] = 'bus_no'
+			if (incoming == 'Stop 6'):
+				#stop = 'stop6'
+				print("inside stop 6")
+				stop.value = 6
+				temp.value = 'bus_no'
+				received['stop'] = 6
+				received['operation'] = 'bus_no'
+			if (incoming == 'Stop 8'):
+				#stop = 'stop8'
+				print("inside stop 8")
+				stop.value = 8
+				temp.value = 'bus_no'
+				received['stop'] = 8
+				received['operation'] = 'bus_no'
+			#if not incoming:
+			#	stop = 'no incoming'
+			#	print('no incoming')
 
 	while True: # infinite loop 1
 		client_socket, address = server_socket.accept() # passively accept TCP client connections; the call returns a pair of arguments: client is a new Socket object used to communicate with the client and address is the address of the client
@@ -138,7 +188,16 @@ if __name__ == '__main__':
 	manager = Manager()
 	central_authority_broadcast = manager.list()
 	temp = manager.Value(c_wchar_p, "")
-	thread = Process(target=server, args=(d, temp, central_authority_broadcast)) # represents a task (i.e. the server program) running in a subprocess
+	bus_send = manager.Value(c_wchar_p, "")
+	eta_send = manager.Value(c_wchar_p, "")
+	pass_send = manager.Value(c_wchar_p, "")
+	bus_no = manager.Value('d',0)
+	stop = manager.Value('d',0)
+	list = manager.list()
+	bus_info = manager.dict()  			#stores data obtained from sumo
+	received = manager.dict()		#stores data received from client
+
+	thread = Process(target=server, args=(d, temp, central_authority_broadcast, bus_send, eta_send, pass_send, bus_no, stop, list, bus_info, received)) # represents a task (i.e. the server program) running in a subprocess
 
 
 	#manager = Manager()
@@ -195,10 +254,69 @@ if __name__ == '__main__':
 			#bus_eta(bus_id)
 		#if step%10000 == 0 and step > 1000:
 			#this shows a list of vehicle ids
-			#bus_id_all = print(traci.vehicle.getIDList())
+			#bus_id_all = traci.vehicle.getIDList()
+			#print(bus_id_all)
+			#print(bus_id_all[0])
+			#print(len(bus_id_all))
+			#bus_data = traci.vehicle.getStops(bus_id_all[0], 1)
+			#next_stop = bus_data[0].stoppingPlaceID
+			#print(next_stop)
+			#if next_stop == 'r1s2':
+				#print("yes")
+
+
+
+			##GET NUMBER OF BUSSES FOR THE GIVEN STOP
+			#VARIABLES BEING used
+			#temp.value, stop.value, bus_no.value
+			bus_id_all = traci.vehicle.getIDList()
+			stop_num = 0
+			count_bus_no = 0
+			#check what the device is asking for
+			if temp.value == 'bus_no':
+				#no_of_bus = len(traci.vehicle.getIDList())
+				#loop that runs for each simulated bus
+				for num in bus_id_all:
+					#getting bus data (next stop data)
+					bus_data = traci.vehicle.getStops(num, 1)
+					next_stop = bus_data[0].stoppingPlaceID
+					#converting next stop to number for comparison
+					if next_stop == 'r1s1':
+						stop_num = 1
+					if next_stop == 'r1s2':
+						stop_num = 2
+					if next_stop == 'r1s3':
+						stop_num = 3
+					if next_stop == 'r1s4':
+						stop_num = 4
+					if next_stop == 'r1s5':
+						stop_num = 5
+					if next_stop == 'r1s6':
+						stop_num = 6
+					if next_stop == 'r1s7':
+						stop_num = 7
+					if next_stop == 'r1s8':
+						stop_num = 8
+					#comparing simulated bus stop to the device requested stop
+					if stop_num <= stop.value:
+						count_bus_no = count_bus_no + 1
+
+						#put code to get data for each bus here
+
+
+
+				#end of for loop
+				#send the count to the server variable
+				bus_no.value = count_bus_no
+				print(bus_no.value)
+				bus_info['no_of_bus'] = count_bus_no
+
+			#end of if statement for bus number
+
+
 
 			# bus occupancy
-			occupied = traci.vehicle.getPersonNumber(bus_id)
+			#occupied = traci.vehicle.getPersonNumber(bus_id)
 			#print('Person in vehicle 1: ' + str(occupied))
 
 			# the following code provides the next bus stop the bus is going to
