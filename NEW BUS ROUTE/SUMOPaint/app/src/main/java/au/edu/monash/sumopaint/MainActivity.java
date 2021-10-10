@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
 import android.widget.SpinnerAdapter;
@@ -71,16 +72,34 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private String ETA = "ETA";
     private String Pass = "Passengers onboard";
     private String Seats = "Seats available";
-    private String ETA_val = null;
-    private String Pass_val = null;
-    private String Seats_val = null;
     private String Bus1 = "BUS 1";
     private String Bus2 = "BUS 2";
     private String Bus3 = "BUS 3";
+    private String Bus1_ETA = null;
+    private String Bus1_Pass = null;
+    private String Bus1_Seat = null;
+    private String Bus2_ETA = null;
+    private String Bus2_Pass = null;
+    private String Bus2_Seat = null;
+    private String Bus3_ETA = null;
+    private String Bus3_Pass = null;
+    private String Bus3_Seat = null;
+    private String Bus1_ETA_val = null;
+    private String Bus1_Pass_val = null;
+    private String Bus1_Seat_val = null;
+    private String Bus2_ETA_val = null;
+    private String Bus2_Pass_val = null;
+    private String Bus2_Seat_val = null;
+    private String Bus3_ETA_val = null;
+    private String Bus3_Pass_val = null;
+    private String Bus3_Seat_val = null;
+    private String user_input = null;       //user input decision
     //private String bus_no = null;
 
     //loop to initialise the bus information
     private Integer bus_no = 0;
+    private Integer receive_counter = 0;
+    private Integer receive_max = 9999;        //max amount of data received from server at given time.
 
 
     @Override
@@ -139,7 +158,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         final Handler handler = new Handler();
 
 
-
         if(v.getId() == R.id.buttonHelloSUMO) { // getId() returns the view's identifier
             if(ping == false)
             {
@@ -171,21 +189,33 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             //get value from spinner
             Spinner spinner = (Spinner)findViewById(R.id.spinners);
             stop = spinner.getSelectedItem().toString();  //STORE STOP VALUE SELECTED INTO STOP VARIABLE
+            //run the process to get data
             new Getdata().execute();
         }
         else if(v.getId() == R.id.buttonsend)
         {
+            //get value from spinner (for bus decision)
             Spinner bus_option = (Spinner)findViewById(R.id.select_bus);
             bus_decision = bus_option.getSelectedItem().toString();
+            //get user input value
+            EditText text_input = (EditText)findViewById(R.id.text_input);
+            user_input = text_input.getText().toString();
+            text_input.getText().clear();
+            //run the process
+            new Senddata().execute();
+
         }
 
 
         else if(v.getId() == R.id.refresh) {
 
             //incoming = null;
+            //new Refresh().execute();
+            new Getdata().execute();
 
-
-            new Refresh().execute();
+/*
+            LISTEN CODE
+            CAN BE REMOVED AND PUT IN THE EXECUTABLE TASK
             //final Handler handler = new Handler();
             listenTimer = new Timer();
             incoming = null;
@@ -206,6 +236,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
             };
             listenTimer.schedule(doAsynchronousTask, 100, 1000);
+ */
         }
 
     }
@@ -213,60 +244,141 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private class ListenTask extends AsyncTask<Boolean, Void, String> {
         protected String doInBackground(Boolean... params) {
+            Log.i("listen", "background");
             if (ping == true) {
                 try {
-                    Log.i("listen","before the incoming");
+                    //Log.i("listen","before the incoming");
                     if(in.ready()) {
-                        Log.i("ready","inside ready");
+                        //Log.i("ready","inside ready");
                         incoming = String.valueOf(in.readLine());
                         if (incoming != null) {
-                            Log.i("if null","not null ");
+                            //Log.i("if null","not null ");
                         } else {
-                            Log.i("if null"," is null ");
+                            //Log.i("if null"," is null ");
                             return incoming;
                         }
                     }
-                    listenTimer.cancel(); //cancel listening
-                    Log.i("listen","afeter the incoming");
+                    //this currently doesnt work
+                    //NEED TO REMOVE LATER
+                    if(incoming == "finished") {
+                        Log.i("listen", "ending");
+                        listenTimer.cancel(); //cancel listening
+                    }
+                   // listenTimer.cancel();
+                   //Log.i("listen","afeter the incoming");
                 } catch (IOException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
             } else if (ping == false) {
-                Log.i("listen","before the incoming");
+                //Log.i("listen","before the incoming");
                 listenTimer.cancel();
                 incoming = "ping = false";
             }
             return incoming;
         }
         protected void onPostExecute(String result) {
-            Log.i("listen", "post execute");
+            Log.i("listen", "post  incoming");
+            Log.i("incoming", incoming);
+            //Log.i("listen", "result");
+            Log.i("result", result);
             //test_input = (TextView) findViewById(R.id.textinput);
             //test_input.setText(result);
-
-            if(instruction == "bus_no")
+/*
+            if(receive_counter == 0)
             {
-
+                Log.i("listen", "count1 = 0");
                 TextView testing = (TextView) findViewById(R.id.businput1_empty);
                 testing.setText(result);
+                //TextView testing2 = (TextView) findViewById(R.id.businput2_empty);
+               // testing2.setText(result);
+                receive_counter++;
+
+            }
+            else if(receive_counter == 1)
+            {
+                //TextView testing = (TextView) findViewById(R.id.businput1_empty);
+                //testing.setText(result);
+                Log.i("listen", "count1 = 1");
+                TextView testing2 = (TextView) findViewById(R.id.businput2_empty);
+                testing2.setText(result);
+                receive_counter=9999;
+            }
+            //checks if max input is received
+            else if(receive_counter.equals(receive_max)) {
+                Log.i("listen", "finished ending");
+                receive_counter = 0;
+                listenTimer.cancel(); //cancel listening
+                Log.i("listen", "finished ending endddddd");
+            }
+*/
+
+            //declaring all text positions
+            TextView bus1_name = (TextView) findViewById(R.id.businput1_name);
+            TextView bus1_eta = (TextView) findViewById(R.id.businput1_ETA);
+            TextView bus1_pass = (TextView) findViewById(R.id.businput1_Occupancy);
+            TextView bus1_seat = (TextView) findViewById(R.id.businput1_Seats);
+            TextView bus2_name = (TextView) findViewById(R.id.businput2_name);
+            TextView bus2_eta = (TextView) findViewById(R.id.businput2_ETA);
+            TextView bus2_pass = (TextView) findViewById(R.id.businput2_Occupancy);
+            TextView bus2_seat = (TextView) findViewById(R.id.businput2_Seats);
+            TextView bus3_name = (TextView) findViewById(R.id.businput3_name);
+            TextView bus3_eta = (TextView) findViewById(R.id.businput3_ETA);
+            TextView bus3_pass = (TextView) findViewById(R.id.businput3_Occupancy);
+            TextView bus3_seat = (TextView) findViewById(R.id.businput3_Seats);
+            TextView bus1_eta_value = (TextView) findViewById(R.id.businput1_ETAvalue);
+            TextView bus1_pass_value = (TextView) findViewById(R.id.businput1_Occupancyvalue);
+            TextView bus1_seat_value = (TextView) findViewById(R.id.businput1_Seatsvalue);
+            TextView bus2_eta_value = (TextView) findViewById(R.id.businput2_ETAvalue);
+            TextView bus2_pass_value = (TextView) findViewById(R.id.businput2_Occupancyvalue);
+            TextView bus2_seat_value = (TextView) findViewById(R.id.businput2_Seatsvalue);
+            TextView bus3_eta_value = (TextView) findViewById(R.id.businput3_ETAvalue);
+            TextView bus3_pass_value = (TextView) findViewById(R.id.businput3_Occupancyvalue);
+            TextView bus3_seat_value = (TextView) findViewById(R.id.businput3_Seatsvalue);
+
+            //get number of busses arriving to stop
+            if(instruction == "bus_no")
+            {
+                //testing value
+                //TextView testing = (TextView) findViewById(R.id.businput1_empty);
+                //testing.setText(result);
 
                 bus_no = Integer.parseInt(incoming);
-                TextView bus1_name = (TextView) findViewById(R.id.businput1_name);
-                TextView bus1_eta = (TextView) findViewById(R.id.businput1_ETA);
-                TextView bus1_pass = (TextView) findViewById(R.id.businput1_Occupancy);
-                TextView bus1_seat = (TextView) findViewById(R.id.businput1_Seats);
-                TextView bus2_name = (TextView) findViewById(R.id.businput2_name);
-                TextView bus2_eta = (TextView) findViewById(R.id.businput2_ETA);
-                TextView bus2_pass = (TextView) findViewById(R.id.businput2_Occupancy);
-                TextView bus2_seat = (TextView) findViewById(R.id.businput2_Seats);
-                TextView bus3_name = (TextView) findViewById(R.id.businput3_name);
-                TextView bus3_eta = (TextView) findViewById(R.id.businput3_ETA);
-                TextView bus3_pass = (TextView) findViewById(R.id.businput3_Occupancy);
-                TextView bus3_seat = (TextView) findViewById(R.id.businput3_Seats);
 
+                //calculate the maximum amount of data that can be sent
+                //equals 3 information per bus
+                receive_max = bus_no*3;
+
+                //reset all values
+                bus1_name.setText("LOADING");
+                bus1_eta.setText("");
+                bus1_pass.setText("");
+                bus1_seat.setText("");
+                bus2_name.setText("");
+                bus2_eta.setText("");
+                bus2_pass.setText("");
+                bus2_seat.setText("");
+                bus3_name.setText("");
+                bus3_eta.setText("");
+                bus3_pass.setText("");
+                bus3_seat.setText("");
+                bus1_eta_value.setText("");
+                bus1_pass_value.setText("");
+                bus1_seat_value.setText("");
+                bus2_eta_value.setText("");
+                bus2_pass_value.setText("");
+                bus2_seat_value.setText("");
+                bus3_eta_value.setText("");
+                bus3_pass_value.setText("");
+                bus3_seat_value.setText("");
+
+                //comparing bus numbers
                 if(bus_no == 0)
                 {
-                    bus1_name.setText("");
+                    //setting to no busses arriving
+                    Bus1 = "No busses are arriving to this stop";
+                    /*
+                    bus1_name.setText("No busses are arriving to this stop");
                     bus1_eta.setText("");
                     bus1_pass.setText("");
                     bus1_seat.setText("");
@@ -278,61 +390,189 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     bus3_eta.setText("");
                     bus3_pass.setText("");
                     bus3_seat.setText("");
+                    */
                 }
 
                if(bus_no == 1)
                {
-                   testing.setText(result);
-                   bus1_name.setText(Bus1);
-                   bus1_eta.setText(ETA);
-                   bus1_pass.setText(Pass);
-                   bus1_seat.setText(Seats);
-                   bus2_name.setText("");
-                   bus2_eta.setText("");
-                   bus2_pass.setText("");
-                   bus2_seat.setText("");
-                   bus3_name.setText("");
-                   bus3_eta.setText("");
-                   bus3_pass.setText("");
-                   bus3_seat.setText("");
+                   Bus1 = "BUS 1";
+                   Bus1_ETA = "ETA";
+                   Bus1_Pass = "Passengers onboard";
+                   Bus1_Seat = "Seats available";
+                   Bus2 = null;
+                   Bus2_ETA = null;
+                   Bus2_Pass = null;
+                   Bus2_Seat = null;
+                   Bus3 = null;
+                   Bus3_ETA = null;
+                   Bus3_Pass = null;
+                   Bus3_Seat = null;
 
                }
                if(bus_no == 2)
                {
-                   bus1_name.setText(Bus1);
-                   bus1_eta.setText(ETA);
-                   bus1_pass.setText(Pass);
-                   bus1_seat.setText(Seats);
-                   bus2_name.setText(Bus2);
-                   bus2_eta.setText(ETA);
-                   bus2_pass.setText(Pass);
-                   bus2_seat.setText(Seats);
-                   bus3_name.setText("");
-                   bus3_eta.setText("");
-                   bus3_pass.setText("");
-                   bus3_seat.setText("");
+                   Bus1 = "BUS 1";
+                   Bus1_ETA = "ETA";
+                   Bus1_Pass = "Passengers onboard";
+                   Bus1_Seat = "Seats available";
+                   Bus2 = "BUS 2";
+                   Bus2_ETA = "ETA";
+                   Bus2_Pass = "Passengers onboard";
+                   Bus2_Seat = "Seats available";
+                   Bus3 = null;
+                   Bus3_ETA = null;
+                   Bus3_Pass = null;
+                   Bus3_Seat = null;
                }
                if(bus_no == 3)
                {
-                   bus1_name.setText(Bus1);
-                   bus1_eta.setText(ETA);
-                   bus1_pass.setText(Pass);
-                   bus1_seat.setText(Seats);
-                   bus2_name.setText(Bus2);
-                   bus2_eta.setText(ETA);
-                   bus2_pass.setText(Pass);
-                   bus2_seat.setText(Seats);
-                   bus3_name.setText(Bus3);
-                   bus3_eta.setText(ETA);
-                   bus3_pass.setText(Pass);
-                   bus3_seat.setText(Seats);
+                   Bus1 = "BUS 1";
+                   Bus1_ETA = "ETA";
+                   Bus1_Pass = "Passengers onboard";
+                   Bus1_Seat = "Seats available";
+                   Bus2 = "BUS 2";
+                   Bus2_ETA = "ETA";
+                   Bus2_Pass = "Passengers onboard";
+                   Bus2_Seat = "Seats available";
+                   Bus3 = "BUS 3";
+                   Bus3_ETA = "ETA";
+                   Bus3_Pass = "Passengers onboard";
+                   Bus3_Seat = "Seats available";
                }
+               instruction = "bus_no1";
+            }
+            //get all the data from the server
+            else if(instruction == "bus_no1")
+            {
+
+                //checking if max number is received
+                if(receive_counter.equals(receive_max))
+                {
+                    //reset all counters
+                    instruction = "";
+                    receive_counter = 0;
+                    //cancel the listening because all the information has been received
+                    listenTimer.cancel();
+
+                    //print all the bus information gathered
+                    bus1_name.setText(Bus1);
+                    bus1_eta.setText(Bus1_ETA);
+                    bus1_pass.setText(Bus1_Pass);
+                    bus1_seat.setText(Bus1_Seat);
+                    bus2_name.setText(Bus2);
+                    bus2_eta.setText(Bus2_ETA);
+                    bus2_pass.setText(Bus2_Pass);
+                    bus2_seat.setText(Bus2_Seat);
+                    bus3_name.setText(Bus3);
+                    bus3_eta.setText(Bus3_ETA);
+                    bus3_pass.setText(Bus3_Pass);
+                    bus3_seat.setText(Bus3_Seat);
+                    bus1_eta_value.setText(Bus1_ETA_val);
+                    bus1_pass_value.setText(Bus1_Pass_val);
+                    bus1_seat_value.setText(Bus1_Seat_val);
+                    bus2_eta_value.setText(Bus2_ETA_val);
+                    bus2_pass_value.setText(Bus2_Pass_val);
+                    bus2_seat_value.setText(Bus2_Seat_val);
+                    bus3_eta_value.setText(Bus3_ETA_val);
+                    bus3_pass_value.setText(Bus3_Pass_val);
+                    bus3_seat_value.setText(Bus3_Seat_val);
+
+                    //reset all the bus information
+                    Bus1_ETA_val = null;
+                    Bus1_Pass_val = null;
+                    Bus1_Seat_val = null;
+                    Bus2_ETA_val = null;
+                    Bus2_Pass_val = null;
+                    Bus2_Seat_val = null;
+                    Bus3_ETA_val = null;
+                    Bus3_Pass_val = null;
+                    Bus3_Seat_val = null;
+                    Bus1 = null;
+                    Bus1_ETA = null;
+                    Bus1_Pass = null;
+                    Bus1_Seat = null;
+                    Bus2 = null;
+                    Bus2_ETA = null;
+                    Bus2_Pass = null;
+                    Bus2_Seat = null;
+                    Bus3 = null;
+                    Bus3_ETA = null;
+                    Bus3_Pass = null;
+                    Bus3_Seat = null;
+                }
+                //bus 1 eta
+                else if(receive_counter == 0)
+                {
+                    //bus1_eta_value.setText(result);
+                    Bus1_ETA_val = result;
+                    receive_counter++;
+                }
+                //bus 1 pass
+                else if(receive_counter == 1)
+                {
+                    //bus1_pass_value.setText(result);
+                    Bus1_Pass_val = result;
+                    receive_counter++;
+                }
+                //bus 1 seat
+                else if(receive_counter == 2)
+                {
+                    //bus1_seat_value.setText(result);
+                    Bus1_Seat_val = result;
+                    receive_counter++;
+                }
+                //bus 2 eta
+                else if(receive_counter == 3)
+                {
+                   // bus2_eta_value.setText(result);
+                    Bus2_ETA_val = result;
+                    receive_counter++;
+                }
+                //bus 2 pass
+                else if(receive_counter == 4)
+                {
+                   // bus2_pass_value.setText(result);
+                    Bus2_Pass_val = result;
+                    receive_counter++;
+                }
+                //bus 2 seat
+                else if(receive_counter == 5)
+                {
+                   // bus2_seat_value.setText(result);
+                    Bus2_Seat_val = result;
+                    receive_counter++;
+                }
+                //bus 3 eta
+                else if(receive_counter == 6)
+                {
+                    //bus3_eta_value.setText(result);
+                    Bus3_ETA_val = result;
+                    receive_counter++;
+                }
+                //bus 3 pass
+                else if(receive_counter == 7)
+                {
+                    //bus3_pass_value.setText(result);
+                    Bus3_Pass_val = result;
+                    receive_counter++;
+                }
+                //bus 3seat
+                else if(receive_counter == 8)
+                {
+                    //bus3_seat_value.setText(result);
+                    Bus3_Seat_val = result;
+                    receive_counter++;
+                }
+
+
             }
 
-
-
-
-
+            //after sending data to the user
+            else if(instruction == "send_data")
+            {
+                bus1_name.setText("Thanks for your input :) !");
+                listenTimer.cancel();
+            }
 
         }
     }
@@ -369,12 +609,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             //added functionality to view connection status of the device to the server
            server_connection = (TextView) findViewById(R.id.server_connect);
            Button connect = (Button) findViewById(R.id.buttonHelloSUMO);
-           if(flag_connection == 1)
+           //reset bus1 name (refers to clearing the sent message)
+           TextView bus1_name = (TextView) findViewById(R.id.businput1_name);
+           if(ping == true)
            {
                server_connection.setText("Connected");
                connect.setText("Close Server");
+               bus1_name.setText("");
            }
-           flag_connection = 1;
+
+
+
         }
     }
 
@@ -384,24 +629,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             if (ping == true) {
                 try {
                     //checking if stop is null
-                    if(stop != null) {
+                    if (stop != null) {
                         send = stop;
                         out.write(send);
                         out.flush();
 
                         //sleep so the server has time to read and perform tasks for the previous write command
-                        try
-                        {
-                            Thread.sleep(  1000 );
-                        }
-                        catch ( InterruptedException e )
-                        {
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
 
                         //request server for data relating to previous write command
                         out.write("bus_no");
                         out.flush();
+                        // set instruction value
                         instruction = "bus_no";
                     }
 
@@ -409,33 +652,35 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
-            }
 
-            listenTimer = new Timer();
-            //incoming = null; //set the incoming to null before receiving new data
-            TimerTask doAsynchronousTask = new TimerTask() {
-                @Override
-                public void run() {
-                    handler.post(new Runnable() {
-                        public void run() {
-                            try {
-                                ListenTask performBackgroundTask = new ListenTask();
-                                performBackgroundTask.execute(ping);
-                            } catch (Exception e) {
-                                // TODO Auto-generated catch block
+
+                //LISTEN CODE
+                listenTimer = new Timer();
+                //incoming = null; //set the incoming to null before receiving new data
+                TimerTask doAsynchronousTask = new TimerTask() {
+                    @Override
+                    public void run() {
+                        handler.post(new Runnable() {
+                            public void run() {
+                                try {
+                                    ListenTask performBackgroundTask = new ListenTask();
+                                    performBackgroundTask.execute(ping);
+                                } catch (Exception e) {
+                                    // TODO Auto-generated catch block
+                                }
                             }
-                        }
-                    });
-                }
-            };
-            listenTimer.schedule(doAsynchronousTask, 100, 1000);
-            Log.i("red", "post listen");
-
+                        });
+                    }
+                };
+                listenTimer.schedule(doAsynchronousTask, 100, 1000);
+            }
+            Log.i("getdata", "post listen");
             return incoming;
         }
         protected void onPostExecute(Boolean result) {
           //  test_input = (TextView) findViewById(R.id.businput1_name);
           //  test_input.setText(stop);
+            Log.i("getdata", "post execute code");
 
         }
     }
@@ -537,8 +782,75 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             //while(incoming == null) {
             // }
             //Log.i("update", "after forever loop");
-            test_input = (TextView) findViewById(R.id.businput1_name);
-            test_input.setText(result);
+            //test_input = (TextView) findViewById(R.id.businput1_name);
+           // test_input.setText(result);
+        }
+    }
+
+    //Called to perform work in a worker thread
+    private class Senddata extends AsyncTask<Void, Void, String> {
+        protected String doInBackground(Void... params) {
+            if (ping == true) {
+                try {
+                    //checking if stop is null
+//change whole thread
+
+                    if (user_input != null) {
+                        //send
+                        out.write(bus_decision);
+                        out.flush();
+
+                        //sleep so the server has time to read and perform tasks for the previous write command
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+
+                        //request server for data relating to previous write command
+
+                        out.write(user_input);
+                        out.flush();
+                        // set instruction value
+
+                        instruction = "send_data";
+                    }
+
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+
+
+                //LISTEN CODE
+                listenTimer = new Timer();
+                //incoming = null; //set the incoming to null before receiving new data
+                TimerTask doAsynchronousTask = new TimerTask() {
+                    @Override
+                    public void run() {
+                        handler.post(new Runnable() {
+                            public void run() {
+                                try {
+                                    ListenTask performBackgroundTask = new ListenTask();
+                                    performBackgroundTask.execute(ping);
+                                } catch (Exception e) {
+                                    // TODO Auto-generated catch block
+                                }
+                            }
+                        });
+                    }
+                };
+                listenTimer.schedule(doAsynchronousTask, 100, 1000);
+
+            }
+            Log.i("senddata", "post listen");
+            return incoming;
+        }
+        protected void onPostExecute(Boolean result) {
+            //  test_input = (TextView) findViewById(R.id.businput1_name);
+            //  test_input.setText(stop);
+            Log.i("senddata", "post execute code");
+
         }
     }
 
@@ -566,8 +878,68 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             server_connection.setText("Not Connected");
             Button connect = (Button) findViewById(R.id.buttonHelloSUMO);
             connect.setText("Connect to Server");
+
+            //declaring bus information text view
+            TextView bus1_name = (TextView) findViewById(R.id.businput1_name);
+            TextView bus1_eta = (TextView) findViewById(R.id.businput1_ETA);
+            TextView bus1_pass = (TextView) findViewById(R.id.businput1_Occupancy);
+            TextView bus1_seat = (TextView) findViewById(R.id.businput1_Seats);
+            TextView bus2_name = (TextView) findViewById(R.id.businput2_name);
+            TextView bus2_eta = (TextView) findViewById(R.id.businput2_ETA);
+            TextView bus2_pass = (TextView) findViewById(R.id.businput2_Occupancy);
+            TextView bus2_seat = (TextView) findViewById(R.id.businput2_Seats);
+            TextView bus3_name = (TextView) findViewById(R.id.businput3_name);
+            TextView bus3_eta = (TextView) findViewById(R.id.businput3_ETA);
+            TextView bus3_pass = (TextView) findViewById(R.id.businput3_Occupancy);
+            TextView bus3_seat = (TextView) findViewById(R.id.businput3_Seats);
+
+            //declaring value text views
+            TextView bus1_eta_value = (TextView) findViewById(R.id.businput1_ETAvalue);
+            TextView bus1_pass_value = (TextView) findViewById(R.id.businput1_Occupancyvalue);
+            TextView bus1_seat_value = (TextView) findViewById(R.id.businput1_Seatsvalue);
+            TextView bus2_eta_value = (TextView) findViewById(R.id.businput2_ETAvalue);
+            TextView bus2_pass_value = (TextView) findViewById(R.id.businput2_Occupancyvalue);
+            TextView bus2_seat_value = (TextView) findViewById(R.id.businput2_Seatsvalue);
+            TextView bus3_eta_value = (TextView) findViewById(R.id.businput3_ETAvalue);
+            TextView bus3_pass_value = (TextView) findViewById(R.id.businput3_Occupancyvalue);
+            TextView bus3_seat_value = (TextView) findViewById(R.id.businput3_Seatsvalue);
+
+            //declaring edit views
+            EditText text_input = (EditText)findViewById(R.id.text_input);
+
+            //clearing values
+            bus1_name.setText("");
+            bus1_eta.setText("");
+            bus1_pass.setText("");
+            bus1_seat.setText("");
+            bus2_name.setText("");
+            bus2_eta.setText("");
+            bus2_pass.setText("");
+            bus2_seat.setText("");
+            bus3_name.setText("");
+            bus3_eta.setText("");
+            bus3_pass.setText("");
+            bus3_seat.setText("");
+            bus1_eta_value.setText("");
+            bus1_pass_value.setText("");
+            bus1_seat_value.setText("");
+            bus2_eta_value.setText("");
+            bus2_pass_value.setText("");
+            bus2_seat_value.setText("");
+            bus3_eta_value.setText("");
+            bus3_pass_value.setText("");
+            bus3_seat_value.setText("");
+            text_input.getText().clear();
+
         }
     }
+
+
+    /*
+
+    DON'T NEED ANYTHING AFTER THIS
+
+     */
 
 
     // Called to perform work in a worker thread.
