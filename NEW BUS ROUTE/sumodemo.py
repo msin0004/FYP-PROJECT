@@ -18,7 +18,7 @@ sending_data = "sample"
 
 
 # server program:  creates the server, handles incoming calls and subsequent user requests
-def server(data,temp,central_authority_broadcast, bus_send, eta_send, pass_send, bus_no, stop, list, bus_info, received):
+def server(data,temp,central_authority_broadcast, bus_send, eta_send, pass_send, bus_no, stop, list, bus_info, received, solution):
 	# size of buffer and backlog
 	buffer = 2048 # value should be a relatively small power of 2, e.g. 4096
 	backlog = 1 # tells the operating system to keep a backlog of 1 connection; this means that you can have at most 1 client waiting while the server is handling the current client; the operating system will typically allow a maximum of 5 waiting connections; to cope with this, busy servers need to generate a new thread to handle each incoming connection so that it can quickly serve the queue of waiting clients
@@ -36,15 +36,23 @@ def server(data,temp,central_authority_broadcast, bus_send, eta_send, pass_send,
 	realVehicleIndex = 0
 	#central_authority_broadcast[realVehicleIndex] = 'hello before loops'
 
+
 	 # bus stop that the user is at
 
 	def clientHandle(client_socket, address, realVehicleIndex):
-
+		testing = 1 #for testing purposes
+		sent_flag = 0 #for when the user sends the final values
 		while True: # infinite loop 2
 			incoming = client_socket.recv(buffer).decode('UTF-8') # receive client data into buffer
 			print("newthread loop")
 			print(incoming)
-			#print(data.value)
+
+			#if client finishes the solution
+			if (received['sent_flag'] == 1 and sent_flag == 0):
+				solution.value = incoming
+				sent_flag = 1
+				received['end'] = 1
+			#if client ends session
 			if (incoming == 'quit'):
 				print("Ending session with client.")
 				client_socket.close() # close the connection with the client
@@ -83,12 +91,75 @@ def server(data,temp,central_authority_broadcast, bus_send, eta_send, pass_send,
 					client_socket.send(mesasge.encode())
 
 
+			#sending bus information code
 			if (incoming == 'bus_no'):
 				temp.value = ''
 				received['operation'] = ''
 				print("inside bus_no")
 				message = str(bus_no.value) + '\n'
 				client_socket.send(message.encode())
+				#testing = number of busses (max 3)
+				#if testing == 1:
+				if bus_no.value == 1:
+					#send bus 1 eta
+					message = str(bus_info['bus1_eta'])
+					client_socket.send(message.encode())
+					#send bus 1 passengers
+					message = str(bus_info['bus1_pass'])
+					client_socket.send(message.encode())
+					#send bus 1 seats
+					message = str(bus_info['bus1_seat'])
+					client_socket.send(message.encode())
+				#elif testing == 2:
+				elif bus_no.value == 2:
+					#send bus 1 eta
+					message = str(bus_info['bus1_eta'])
+					client_socket.send(message.encode())
+					#send bus 1 passengers
+					message = str(bus_info['bus1_pass'])
+					client_socket.send(message.encode())
+					#send bus 1 seats
+					message = str(bus_info['bus1_seat'])
+					client_socket.send(message.encode())
+					#send bus 2 eta
+					message = str(bus_info['bus2_eta'])
+					client_socket.send(message.encode())
+					#send bus 2 passengers
+					message = str(bus_info['bus2_pass'])
+					client_socket.send(message.encode())
+					#send bus 2 seats
+					message = str(bus_info['bus2_seat'])
+					client_socket.send(message.encode())
+				#elif testing == 3:
+				elif bus_no.value == 3:
+					#send bus 1 eta
+					message = str(bus_info['bus1_eta'])
+					client_socket.send(message.encode())
+					#send bus 1 passengers
+					message = str(bus_info['bus1_pass'])
+					client_socket.send(message.encode())
+					#send bus 1 seats
+					message = str(bus_info['bus1_seat'])
+					client_socket.send(message.encode())
+					#send bus 2 eta
+					message = str(bus_info['bus2_eta'])
+					client_socket.send(message.encode())
+					#send bus 2 passengers
+					message = str(bus_info['bus2_pass'])
+					client_socket.send(message.encode())
+					#send bus 2 seats
+					message = str(bus_info['bus2_seat'])
+					client_socket.send(message.encode())
+					#send bus 3 eta
+					message = str(bus_info['bus3_eta'])
+					client_socket.send(message.encode())
+					#send bus 3 passengers
+					message = str(bus_info['bus3_pass'])
+					client_socket.send(message.encode())
+					#send bus 3 seats
+					message = str(bus_info['bus3_seat'])
+					client_socket.send(message.encode())
+
 
 			if (incoming == 'Stop 7'):
 				#stop = 'stop7'
@@ -155,6 +226,17 @@ def server(data,temp,central_authority_broadcast, bus_send, eta_send, pass_send,
 				temp.value = 'bus_no'
 				received['stop'] = 8
 				received['operation'] = 'bus_no'
+
+			#FINAL SOLUTION FROM CLIENT
+			if (incoming == 'Bus 1'):
+				received['sent_flag'] = 1
+				received['bus'] = incoming
+			if (incoming == 'Bus 2'):
+				received['sent_flag'] = 1
+				received['bus'] = incoming
+			if (incoming == 'Bus 3'):
+				received['sent_flag'] = 1
+				received['bus'] = incoming
 			#if not incoming:
 			#	stop = 'no incoming'
 			#	print('no incoming')
@@ -194,10 +276,13 @@ if __name__ == '__main__':
 	bus_no = manager.Value('d',0)
 	stop = manager.Value('d',0)
 	list = manager.list()
-	bus_info = manager.dict()  			#stores data obtained from sumo
-	received = manager.dict()		#stores data received from client
+	bus_info = manager.dict()  						#stores data obtained from sumo
+	received = manager.dict()						#stores data received from client
+	solution = manager.Value(c_wchar_p, "") 		#stores the final solution
+	received['sent_flag'] = 0						#flag that signals client sending the decision
+	received['end'] = 0
 
-	thread = Process(target=server, args=(d, temp, central_authority_broadcast, bus_send, eta_send, pass_send, bus_no, stop, list, bus_info, received)) # represents a task (i.e. the server program) running in a subprocess
+	thread = Process(target=server, args=(d, temp, central_authority_broadcast, bus_send, eta_send, pass_send, bus_no, stop, list, bus_info, received, solution)) # represents a task (i.e. the server program) running in a subprocess
 
 
 	#manager = Manager()
@@ -298,11 +383,25 @@ if __name__ == '__main__':
 					if next_stop == 'r1s8':
 						stop_num = 8
 					#comparing simulated bus stop to the device requested stop
-					if stop_num <= stop.value:
+					if stop_num <= stop.value and count_bus_no < 4:
 						count_bus_no = count_bus_no + 1
-
 						#put code to get data for each bus here
+						#USE the following variables
+						#bus limit = 64 passengers
+						#bus seats = 38 seats
 
+						if count_bus_no == 1:
+							bus_info['bus1_eta'] = '10'
+							bus_info['bus1_pass'] = str(traci.vehicle.getPersonNumber(bus_id_all)) + '/64'
+							bus_info['bus1_seat'] = str(traci.vehicle.getPersonNumber(bus_id_all)) + '/38'
+						if count_bus_no == 2:
+							bus_info['bus2_eta'] = 10
+							bus_info['bus2_pass'] = str(traci.vehicle.getPersonNumber(bus_id_all)) + '/64'
+							bus_info['bus2_seat'] = str(traci.vehicle.getPersonNumber(bus_id_all)) + '/38'
+						if count_bus_no == 3:
+							bus_info['bus3_eta'] = 10
+							bus_info['bus3_pass'] = str(traci.vehicle.getPersonNumber(bus_id_all)) + '/64'
+							bus_info['bus3_seat'] = str(traci.vehicle.getPersonNumber(bus_id_all)) + '/38'
 
 
 				#end of for loop
@@ -313,11 +412,32 @@ if __name__ == '__main__':
 
 			#end of if statement for bus number
 
+			####
+			####
+			####		MAIN CODE
+			####
+			####
+
+			if(received['end'] == 1):
+				#create excel sheet for storage
+				print("Received Solution from user\n")
+				print(str(solution.value))
+				print("Bus picked by user\n")
+				print(str(received['bus']))
+
+
+
+
+
+
+
+
+
 
 
 			# bus occupancy
-			#occupied = traci.vehicle.getPersonNumber(bus_id)
-			#print('Person in vehicle 1: ' + str(occupied))
+			occupied = traci.vehicle.getPersonNumber(bus_id)
+			print('Person in vehicle 1: ' + str(occupied))
 
 			# the following code provides the next bus stop the bus is going to
 			# test1 is a string value and stores the next bus stop
@@ -351,8 +471,8 @@ if __name__ == '__main__':
 
 
 			# bus capacity
-			#capacity = traci.vehicle.getPersonCapacity(bus_id)
-			#print('Capacity of vehicle 1: ' + str(capacity))
+			capacity = traci.vehicle.getPersonCapacity(bus_id)
+			print('Capacity of vehicle 1: ' + str(capacity))
 
 			#inputs from app
 			#print(d)
