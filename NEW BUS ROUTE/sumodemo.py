@@ -13,6 +13,9 @@ from ctypes import c_wchar_p
 import socket
 import time
 import threading
+#for excel saving
+import xlwt
+from openpyxl import load_workbook
 #stop = 'stop0'
 sending_data = "sample"
 
@@ -47,17 +50,19 @@ def server(data,temp,central_authority_broadcast, bus_send, eta_send, pass_send,
 			print("newthread loop")
 			print(incoming)
 
-			#if client finishes the solution
-			if (received['sent_flag'] == 1 and sent_flag == 0):
-				solution.value = incoming
-				sent_flag = 1
-				received['end'] = 1
 			#if client ends session
 			if (incoming == 'quit'):
 				print("Ending session with client.")
 				client_socket.close() # close the connection with the client
 				#central_authority_broadcast[realVehicleIndex] = 'No Advice'
 				break # breaks out of infinite loop 2
+
+			#if client finishes the solution
+			if (received['sent_flag'] == 1 and sent_flag == 0):
+				solution.value = incoming
+				sent_flag = 1
+				received['end'] = 1
+
 			if (incoming == 'update'):
 				#print("sending Data")
 				#central_authority_broadcast[realVehicleIndex] = "hello"
@@ -101,64 +106,74 @@ def server(data,temp,central_authority_broadcast, bus_send, eta_send, pass_send,
 				#testing = number of busses (max 3)
 				#if testing == 1:
 				if bus_no.value == 1:
+					print("inside sending for 1 bus")
 					#send bus 1 eta
-					message = str(bus_info['bus1_eta'])
+					message = str(bus_info['bus1_eta']) + '\n'
+					#message = '1\n'
 					client_socket.send(message.encode())
 					#send bus 1 passengers
-					message = str(bus_info['bus1_pass'])
+					message = str(bus_info['bus1_pass']) + '\n'
+					#message = '1\n'
 					client_socket.send(message.encode())
 					#send bus 1 seats
-					message = str(bus_info['bus1_seat'])
+					message = str(bus_info['bus1_seat']) + '\n'
+					#message = '1\n'
 					client_socket.send(message.encode())
+					print("ending send for 1 bus")
 				#elif testing == 2:
 				elif bus_no.value == 2:
+					print("inside sending for 2 bus")
 					#send bus 1 eta
-					message = str(bus_info['bus1_eta'])
+					message = str(bus_info['bus1_eta']) + '\n'
+					#message = '2\n'
 					client_socket.send(message.encode())
 					#send bus 1 passengers
-					message = str(bus_info['bus1_pass'])
+					message = str(bus_info['bus1_pass']) + '\n'
 					client_socket.send(message.encode())
 					#send bus 1 seats
-					message = str(bus_info['bus1_seat'])
+					message = str(bus_info['bus1_seat']) + '\n'
 					client_socket.send(message.encode())
 					#send bus 2 eta
-					message = str(bus_info['bus2_eta'])
+					message = str(bus_info['bus2_eta']) + '\n'
 					client_socket.send(message.encode())
 					#send bus 2 passengers
-					message = str(bus_info['bus2_pass'])
+					message = str(bus_info['bus2_pass']) + '\n'
 					client_socket.send(message.encode())
 					#send bus 2 seats
-					message = str(bus_info['bus2_seat'])
+					message = str(bus_info['bus2_seat']) + '\n'
 					client_socket.send(message.encode())
+					print("ending send for 2 bus")
 				#elif testing == 3:
 				elif bus_no.value == 3:
+					print("inside sending for 3 bus")
 					#send bus 1 eta
-					message = str(bus_info['bus1_eta'])
+					message = str(bus_info['bus1_eta']) + '\n'
 					client_socket.send(message.encode())
 					#send bus 1 passengers
-					message = str(bus_info['bus1_pass'])
+					message = str(bus_info['bus1_pass']) + '\n'
 					client_socket.send(message.encode())
 					#send bus 1 seats
-					message = str(bus_info['bus1_seat'])
+					message = str(bus_info['bus1_seat']) + '\n'
 					client_socket.send(message.encode())
 					#send bus 2 eta
-					message = str(bus_info['bus2_eta'])
+					message = str(bus_info['bus2_eta']) + '\n'
 					client_socket.send(message.encode())
 					#send bus 2 passengers
-					message = str(bus_info['bus2_pass'])
+					message = str(bus_info['bus2_pass']) + '\n'
 					client_socket.send(message.encode())
 					#send bus 2 seats
-					message = str(bus_info['bus2_seat'])
+					message = str(bus_info['bus2_seat']) + '\n'
 					client_socket.send(message.encode())
 					#send bus 3 eta
-					message = str(bus_info['bus3_eta'])
+					message = str(bus_info['bus3_eta']) + '\n'
 					client_socket.send(message.encode())
 					#send bus 3 passengers
-					message = str(bus_info['bus3_pass'])
+					message = str(bus_info['bus3_pass']) + '\n'
 					client_socket.send(message.encode())
 					#send bus 3 seats
-					message = str(bus_info['bus3_seat'])
+					message = str(bus_info['bus3_seat']) + '\n'
 					client_socket.send(message.encode())
+					print("ending send for 3 bus")
 
 
 			if (incoming == 'Stop 7'):
@@ -281,9 +296,17 @@ if __name__ == '__main__':
 	solution = manager.Value(c_wchar_p, "") 		#stores the final solution
 	received['sent_flag'] = 0						#flag that signals client sending the decision
 	received['end'] = 0
+	bus_info['bus1_eta'] = ''
+	bus_info['bus1_pass'] = ''
+	bus_info['bus1_seat'] = ''
+	bus_info['bus2_eta'] = ''
+	bus_info['bus2_pass'] = ''
+	bus_info['bus2_seat'] = ''
+	bus_info['bus3_eta'] = ''
+	bus_info['bus3_pass'] = ''
+	bus_info['bus3_seat'] = ''
 
 	thread = Process(target=server, args=(d, temp, central_authority_broadcast, bus_send, eta_send, pass_send, bus_no, stop, list, bus_info, received, solution)) # represents a task (i.e. the server program) running in a subprocess
-
 
 	#manager = Manager()
 	#central_authority_broadcast = manager.list()
@@ -316,6 +339,14 @@ if __name__ == '__main__':
 	thread.start()
 	print("The server has been launched.")
 
+	# CREATING THE EXCEL Workbook
+	book = load_workbook('Bus_Decisions_Data_Gathered.xlsx')
+	#book = xlwt.Workbook()
+	save_time = str(time.strftime('%d %b %Y at %H.%M.%S'))
+	sheet = book.create_sheet(save_time)
+	#sheet.title = save_time
+
+
 	##	LOCATION OF ALL VARIABLES CREATED
 	##
 	flag_stops = 1  			#flag to check if code has run before in the get next stop section
@@ -324,6 +355,7 @@ if __name__ == '__main__':
 	#next_stop = "x" 			#next stop for the bus (CREATED IN THE LOOP BELOW)
 	bus_id = 'bus_flow.0'		#temporary variable to store bus id for data collection (need to change to allow dynamic readings)
 	t = 0
+	end_excel = 0
 
 	while step < endSim:
 		thread.join(timeout) # implicitly controls the speed of the simulation; blocks the main program either until the server program terminates (if no timeout is defined) or until the timeout occurs
@@ -391,17 +423,17 @@ if __name__ == '__main__':
 						#bus seats = 38 seats
 
 						if count_bus_no == 1:
-							bus_info['bus1_eta'] = '10'
-							bus_info['bus1_pass'] = str(traci.vehicle.getPersonNumber(bus_id_all)) + '/64'
-							bus_info['bus1_seat'] = str(traci.vehicle.getPersonNumber(bus_id_all)) + '/38'
+							bus_info['bus1_eta'] = 10
+							bus_info['bus1_pass'] = str(traci.vehicle.getPersonNumber(num)) + '/64'
+							bus_info['bus1_seat'] = str(traci.vehicle.getPersonNumber(num)) + '/38'
 						if count_bus_no == 2:
 							bus_info['bus2_eta'] = 10
-							bus_info['bus2_pass'] = str(traci.vehicle.getPersonNumber(bus_id_all)) + '/64'
-							bus_info['bus2_seat'] = str(traci.vehicle.getPersonNumber(bus_id_all)) + '/38'
+							bus_info['bus2_pass'] = str(traci.vehicle.getPersonNumber(num)) + '/64'
+							bus_info['bus2_seat'] = str(traci.vehicle.getPersonNumber(num)) + '/38'
 						if count_bus_no == 3:
 							bus_info['bus3_eta'] = 10
-							bus_info['bus3_pass'] = str(traci.vehicle.getPersonNumber(bus_id_all)) + '/64'
-							bus_info['bus3_seat'] = str(traci.vehicle.getPersonNumber(bus_id_all)) + '/38'
+							bus_info['bus3_pass'] = str(traci.vehicle.getPersonNumber(num)) + '/64'
+							bus_info['bus3_seat'] = str(traci.vehicle.getPersonNumber(num)) + '/38'
 
 
 				#end of for loop
@@ -418,26 +450,50 @@ if __name__ == '__main__':
 			####
 			####
 
-			if(received['end'] == 1):
+			if(received['end'] == 1 and end_excel == 0):
 				#create excel sheet for storage
 				print("Received Solution from user\n")
 				print(str(solution.value))
 				print("Bus picked by user\n")
 				print(str(received['bus']))
 
+				data = 'Data gathered from session with app'
+				sheet['A1'] = data
 
+				sheet['A3']= 'Bus 1'
+				sheet['A4'] = 'ETA'
+				sheet['B4'] = bus_info['bus1_eta']
+				sheet['A5'] = 'Passengers Onboard'
+				sheet['B5'] = bus_info['bus1_pass']
+				sheet['A6'] = 'Seats Taken'
+				sheet['B6'] = bus_info['bus1_seat']
 
+				sheet['A8'] = 'Bus 2'
+				sheet['A9'] = 'ETA'
+				sheet['B9'] = bus_info['bus2_eta']
+				sheet['A10'] = 'Passengers Onboard'
+				sheet['B10'] = bus_info['bus2_pass']
+				sheet['A11'] = 'Seats Taken'
+				sheet['B11']= bus_info['bus2_seat']
 
+				sheet['A13'] = 'Bus 3'
+				sheet['A14'] = 'ETA'
+				sheet['B14'] = bus_info['bus3_eta']
+				sheet['A15'] = 'Passengers Onboard'
+				sheet['B15'] = bus_info['bus3_pass']
+				sheet['A16'] = 'Seats Taken'
+				sheet['B16']= bus_info['bus3_seat']
 
+				sentence = 'The following response was obtained from the app'
+				sheet['A20'] = sentence
+				sheet['A21'] = solution.value		#Print out the user output
 
-
-
-
-
+				book.save('Bus_Decisions_Data_Gathered.xlsx')
+				end_excel = 1		#Change flag to get out of loop
 
 			# bus occupancy
-			occupied = traci.vehicle.getPersonNumber(bus_id)
-			print('Person in vehicle 1: ' + str(occupied))
+			#occupied = traci.vehicle.getPersonNumber(bus_id)
+			#print('Person in vehicle 1: ' + str(occupied))
 
 			# the following code provides the next bus stop the bus is going to
 			# test1 is a string value and stores the next bus stop
@@ -471,8 +527,8 @@ if __name__ == '__main__':
 
 
 			# bus capacity
-			capacity = traci.vehicle.getPersonCapacity(bus_id)
-			print('Capacity of vehicle 1: ' + str(capacity))
+			#capacity = traci.vehicle.getPersonCapacity(bus_id)
+			#print('Capacity of vehicle 1: ' + str(capacity))
 
 			#inputs from app
 			#print(d)
