@@ -29,7 +29,7 @@
                 android:id="@+id/title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="3dp"
+                android:layout_marginLeft="5dp"
                 android:text="@string/text_colour"
                 android:textColor="#000000"
                 android:textSize="30sp"
@@ -90,6 +90,8 @@
         <TableRow
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="6dp"
             android:weightSum="1.0">
 
             <Spinner
@@ -226,6 +228,7 @@
                 android:text=""
                 android:textColor="@color/colorBlack"
                 android:textSize="20sp"
+                android:layout_marginLeft="5dp"
                 android:textStyle="bold"/>
             <TextView
                 android:id="@+id/businput1_empty"
@@ -246,6 +249,7 @@
                 android:text=""
                 android:textColor="@color/colorBlack"
                 android:textSize="20sp"
+                android:layout_marginLeft="5dp"
                 />
             <TextView
                 android:id="@+id/businput1_ETAvalue"
@@ -266,6 +270,7 @@
                 android:text=""
                 android:textColor="@color/colorBlack"
                 android:textSize="20sp"
+                android:layout_marginLeft="5dp"
                 />
             <TextView
                 android:id="@+id/businput1_Occupancyvalue"
@@ -286,6 +291,7 @@
                 android:text=""
                 android:textColor="@color/colorBlack"
                 android:textSize="20sp"
+                android:layout_marginLeft="5dp"
                 />
 
             <TextView
@@ -310,6 +316,7 @@
                 android:text=""
                 android:textColor="@color/colorBlack"
                 android:textSize="20sp"
+                android:layout_marginLeft="5dp"
                 android:textStyle="bold"/>
             <TextView
                 android:id="@+id/businput2_empty"
@@ -330,6 +337,7 @@
                 android:text=""
                 android:textColor="@color/colorBlack"
                 android:textSize="20sp"
+                android:layout_marginLeft="5dp"
                 />
             <TextView
                 android:id="@+id/businput2_ETAvalue"
@@ -350,6 +358,7 @@
                 android:text=""
                 android:textColor="@color/colorBlack"
                 android:textSize="20sp"
+                android:layout_marginLeft="5dp"
                 />
             <TextView
                 android:id="@+id/businput2_Occupancyvalue"
@@ -370,6 +379,7 @@
                 android:text=""
                 android:textColor="@color/colorBlack"
                 android:textSize="20sp"
+                android:layout_marginLeft="5dp"
                 />
 
             <TextView
@@ -394,6 +404,7 @@
                 android:text=""
                 android:textColor="@color/colorBlack"
                 android:textSize="20sp"
+                android:layout_marginLeft="5dp"
                 android:textStyle="bold"/>
             <TextView
                 android:id="@+id/businput3_empty"
@@ -414,6 +425,7 @@
                 android:text=""
                 android:textColor="@color/colorBlack"
                 android:textSize="20sp"
+                android:layout_marginLeft="5dp"
                 />
             <TextView
                 android:id="@+id/businput3_ETAvalue"
@@ -434,6 +446,7 @@
                 android:text=""
                 android:textColor="@color/colorBlack"
                 android:textSize="20sp"
+                android:layout_marginLeft="5dp"
                 />
             <TextView
                 android:id="@+id/businput3_Occupancyvalue"
@@ -454,6 +467,7 @@
                 android:text=""
                 android:textColor="@color/colorBlack"
                 android:textSize="20sp"
+                android:layout_marginLeft="5dp"
                 />
 
             <TextView

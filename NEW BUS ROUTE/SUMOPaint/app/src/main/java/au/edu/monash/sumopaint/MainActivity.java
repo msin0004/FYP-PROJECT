@@ -57,7 +57,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Timer listenTimer;
     private Handler handler;
     private String[] stops = new String[]{"Stop 1", "Stop 2", "Stop 3", "Stop 4", "Stop 5", "Stop 6", "Stop 7", "practise"};
-    private String[] busses = new String[]{"Bus 1", "Bus 2", "Bus 3"};
+    private String[] buses = new String[]{"Bus 1", "Bus 2", "Bus 3"};
     private String stop = null; //stop value to get data on
     private String bus_decision = null;
     private String get = "receive"; //variable that requests data from server to be sent
@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     //variables from server to print on device
     private String ETA = "ETA";
     private String Pass = "Passengers onboard";
-    private String Seats = "Seats available";
+    private String Seats = "Seats taken";
     private String Bus1 = "BUS 1";
     private String Bus2 = "BUS 2";
     private String Bus3 = "BUS 3";
@@ -119,7 +119,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Button refresh = (Button) findViewById(R.id.refresh);
        // Button hang_up = (Button) findViewById(R.id.buttonGoodbyeSUMO);
         Button go_button = (Button) findViewById(R.id.buttongo);
-        Button send = (Button) findViewById(R.id.buttonsend);
+        Button send_button = (Button) findViewById(R.id.buttonsend);
         Spinner spinner = (Spinner)findViewById(R.id.spinners);
        Spinner bus_option = (Spinner)findViewById(R.id.select_bus);
 
@@ -132,7 +132,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 android.R.layout.simple_spinner_item,stops);
         spinner.setAdapter(adapter);
         ArrayAdapter<String> adapter_1 = new ArrayAdapter<String>(MainActivity.this,
-                android.R.layout.simple_spinner_item,busses);
+                android.R.layout.simple_spinner_item,buses);
         bus_option.setAdapter(adapter_1);
 
         // Set the listeners so that the buttons can be used for event handling.
@@ -148,6 +148,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //hang_up.setOnClickListener(this);
         go_button.setOnClickListener(this);
         //spinner.setOnItemSelectedListener(this);
+        send_button.setOnClickListener(this);
 
         handler = new Handler();
     }
@@ -336,7 +337,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             TextView bus3_pass_value = (TextView) findViewById(R.id.businput3_Occupancyvalue);
             TextView bus3_seat_value = (TextView) findViewById(R.id.businput3_Seatsvalue);
 
-            //get number of busses arriving to stop
+            //get number of buses arriving to stop
             if(instruction == "bus_no")
             {
                 //testing value
@@ -375,10 +376,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 //comparing bus numbers
                 if(bus_no == 0)
                 {
-                    //setting to no busses arriving
-                    Bus1 = "No busses are arriving to this stop";
+                    //setting to no buses arriving
+                    Bus1 = "No buses are arriving to this stop";
                     /*
-                    bus1_name.setText("No busses are arriving to this stop");
+                    bus1_name.setText("No buses are arriving to this stop");
                     bus1_eta.setText("");
                     bus1_pass.setText("");
                     bus1_seat.setText("");
@@ -571,6 +572,26 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             else if(instruction == "send_data")
             {
                 bus1_name.setText("Thanks for your input :) !");
+                bus1_eta.setText("");
+                bus1_pass.setText("");
+                bus1_seat.setText("");
+                bus2_name.setText("");
+                bus2_eta.setText("");
+                bus2_pass.setText("");
+                bus2_seat.setText("");
+                bus3_name.setText("");
+                bus3_eta.setText("");
+                bus3_pass.setText("");
+                bus3_seat.setText("");
+                bus1_eta_value.setText("");
+                bus1_pass_value.setText("");
+                bus1_seat_value.setText("");
+                bus2_eta_value.setText("");
+                bus2_pass_value.setText("");
+                bus2_seat_value.setText("");
+                bus3_eta_value.setText("");
+                bus3_pass_value.setText("");
+                bus3_seat_value.setText("");
                 listenTimer.cancel();
             }
 
