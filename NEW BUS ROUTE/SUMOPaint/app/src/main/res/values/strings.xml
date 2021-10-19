@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">SUMOPaint</string>
+    <string name="app_name">Bus Stop &amp; Go</string>
 
     <string name="hello_world">Connect to Server</string>
     <string name="goodbye_world">Close Server</string>

@@ -30,10 +30,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="5dp"
-                android:text="@string/text_colour"
+                android:text="Connect to server"
                 android:textColor="#000000"
-                android:textSize="30sp"
-                android:textStyle="bold" />
+                android:textSize="25sp"/>
+          <!--      android:textStyle="bold"
+                /> -->
 
         </TableRow>
     </TableLayout>
@@ -272,15 +273,15 @@
                 android:textSize="20sp"
                 android:layout_marginLeft="5dp"
                 />
+
             <TextView
                 android:id="@+id/businput1_Occupancyvalue"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center"
                 android:text=""
                 android:textColor="@color/colorBlack"
-                android:textSize="20sp"
-                android:gravity="center"
-                />
+                android:textSize="20sp" />
         </TableRow>
         <TableRow>
             android:weightSum="1.0">
