@@ -2,9 +2,6 @@
 
 	<vType id="bus" accel="2.6" decel="4.5" length="12" color="1,0,0" vClass="bus" guiShape="bus"/>
 
-<!--	<busStop id="<BUS_STOP_ID>" lane="<LANE_ID>" startPos="<STARTING_POSITION>" endPos="<ENDING_POSITION>" [lines="<LINE_ID>[ <LINE_ID>]*"]/>
--->
-
 <!--
       ROUTE file
         displays the lanes the bus will take through its route from chadstone shopping cnetre to monash bus interchange
@@ -19,29 +16,7 @@
 		198691699#0 198691699#1 198691699#2 198691699#3 792597607#0 792597607#1 794258388 792597606 573676801 794258389#0 794258389#1 794258389#2
 		198691696 794269737 792153597 767369896#0 767369896#1 767369896#2 237508424 139327105#0 139327105#1 167571364 44348023#0 44348023#1 139327110 10539028#0 10539028#1 493547206#0 493547206#1 807418425#0 807418425#1">
 
-<!--  the bus stops are located in the additional file
-      the until value will need to be determined later during simulated testing
-      will need to check bus times on ptv and determine average times between stops
-      can probably code it so after it leaves the first stop, the other stops will be
-      offset but a fixed value
-      Fixed offset values
-      s1 = 0 minutes  = 0s
-      s2 = 9 minutes  = 540s
-      s3 = 9 minutes  = 540s
-      s4 = 12 minutes = 720s
-      s5 = 17 minutes = 1020s
-      s6 = 17 minutes = 1020s
-      s7 = 20 minutes = 1200s
-      s8 = 24 minutes = 1440s
-			<stop busStop="r1s1" until="20"/>
-  		<stop busStop="r1s2" until="250"/>
-  		<stop busStop="r1s3" until="390"/>
-      <stop busStop="r1s4" until="490"/>
-  		<stop busStop="r1s5" until="600"/>
-      <stop busStop="r1s6" until="700"/>
-  		<stop busStop="r1s7" until="780"/>
-      <stop busStop="r1s8" until="840"/>
--->
+
   		<stop busStop="r1s1" duration="20"/>
   		<stop busStop="r1s2" duration="20"/>
   		<stop busStop="r1s3" duration="20"/>
@@ -53,12 +28,6 @@
 
 	</route>
 
-<!--	<trip="bus" from=
--->
-<!--	<vehicle id="bus" route="601route" line="bus" begin="5" end="1000" period="100" />
--->
-<!--	</vehicle>
--->
 
 	<flow type="bus" line="bus" id="bus_flow" begin="2" route="busroute" end="9000" vehsPerHour="25"/>
 
@@ -74,9 +43,9 @@
 		<ride from="-787851477" busStop="r1s8" lines="bus"/>
 	</personFlow>
 
-<!--   OPTION 1 -->
+	<!--  OPTION 1  -->
 <!--
-  <personFlow id="BusPerson_0" begin="0" end="9000" personsPerHour="25" departPos="33">
+  <personFlow id="BusPerson_0" begin="0" end="9000" personsPerHour="180" departPos="37">
     <walk from="-787851477" busStop="r1s1"/>
 		<ride busStop="r1s8" lines="bus"/>
 	</personFlow>
