@@ -43,8 +43,8 @@ def server(data,temp,central_authority_broadcast, bus_send, eta_send, pass_send,
 		sent_flag = 0 #for when the user sends the final values
 		while True: # infinite loop 2
 			incoming = client_socket.recv(buffer).decode('UTF-8') # receive client data into buffer
-			print("New client input: ")
-			print(incoming)
+			print("Receiving data from client.")
+			#print(incoming)
 
 			#if client ends session
 			if (incoming == 'quit'):
@@ -54,6 +54,7 @@ def server(data,temp,central_authority_broadcast, bus_send, eta_send, pass_send,
 
 			#if client finishes the solution
 			if (received['sent_flag'] == 1 and sent_flag == 0):
+				print("Client sent over user decision making choices.")
 				solution.value = incoming
 				sent_flag = 1
 				received['end'] = 1
@@ -62,11 +63,11 @@ def server(data,temp,central_authority_broadcast, bus_send, eta_send, pass_send,
 			if (incoming == 'bus_no'):
 				temp.value = ''
 				received['operation'] = ''
-				print("inside bus_no")
+				print("Client requested bus information for stop " + str(received['stop']) + ".")
 				message = str(bus_no.value) + '\n'
 				client_socket.send(message.encode())
 				if bus_no.value == 1:
-					print("inside sending for 1 bus")
+					#print("inside sending for 1 bus")
 					#send bus 1 eta
 					message = str(bus_info['bus1_eta']) + '\n'
 					#message = '1\n'
@@ -79,9 +80,9 @@ def server(data,temp,central_authority_broadcast, bus_send, eta_send, pass_send,
 					message = str(bus_info['bus1_seat']) + '\n'
 					#message = '1\n'
 					client_socket.send(message.encode())
-					print("ending send for 1 bus")
+					#print("ending send for 1 bus")
 				elif bus_no.value == 2:
-					print("inside sending for 2 bus")
+					#print("inside sending for 2 bus")
 					#send bus 1 eta
 					message = str(bus_info['bus1_eta']) + '\n'
 					#message = '2\n'
@@ -101,9 +102,9 @@ def server(data,temp,central_authority_broadcast, bus_send, eta_send, pass_send,
 					#send bus 2 seats
 					message = str(bus_info['bus2_seat']) + '\n'
 					client_socket.send(message.encode())
-					print("ending send for 2 bus")
+					#print("ending send for 2 bus")
 				elif bus_no.value == 3:
-					print("inside sending for 3 bus")
+					#print("inside sending for 3 bus")
 					#send bus 1 eta
 					message = str(bus_info['bus1_eta']) + '\n'
 					client_socket.send(message.encode())
@@ -131,61 +132,61 @@ def server(data,temp,central_authority_broadcast, bus_send, eta_send, pass_send,
 					#send bus 3 seats
 					message = str(bus_info['bus3_seat']) + '\n'
 					client_socket.send(message.encode())
-					print("ending send for 3 bus")
+					#print("ending send for 3 bus")
 
 
 			if (incoming == 'Stop 7'):
 				#stop = 'stop7'
-				print("inside stop 7")
+				#print("inside stop 7")
 				stop.value = 7
 				temp.value = 'bus_no'
 				received['stop'] = 7
 				received['operation'] = 'bus_no'
 			if (incoming == 'Stop 1'):
 				#stop = 'stop1'
-				print("inside stop 1")
+				#print("inside stop 1")
 				stop.value = 1
 				temp.value = 'bus_no'
 				received['stop'] = 1
 				received['operation'] = 'bus_no'
 			if (incoming == 'Stop 2'):
 				#stop = 'stop2'
-				print("inside stop 2")
+				#print("inside stop 2")
 				stop.value = 2
 				temp.value = 'bus_no'
 				received['stop'] = 2
 				received['operation'] = 'bus_no'
 			if (incoming == 'Stop 3'):
 				#stop = 'stop3'
-				print("inside stop 3")
+				#print("inside stop 3")
 				stop.value = 3
 				temp.value = 'bus_no'
 				received['stop'] = 3
 				received['operation'] = 'bus_no'
 			if (incoming == 'Stop 4'):
 				#stop = 'stop4'
-				print("inside stop 4")
+				#print("inside stop 4")
 				stop.value = 4
 				temp.value = 'bus_no'
 				received['stop'] = 4
 				received['operation'] = 'bus_no'
 			if (incoming == 'Stop 5'):
 				#stop = 'stop5'
-				print("inside stop 5")
+				#print("inside stop 5")
 				stop.value = 5
 				temp.value = 'bus_no'
 				received['stop'] = 5
 				received['operation'] = 'bus_no'
 			if (incoming == 'Stop 6'):
 				#stop = 'stop6'
-				print("inside stop 6")
+				#print("inside stop 6")
 				stop.value = 6
 				temp.value = 'bus_no'
 				received['stop'] = 6
 				received['operation'] = 'bus_no'
 			if (incoming == 'Stop 8'):
 				#stop = 'stop8'
-				print("inside stop 8")
+				#print("inside stop 8")
 				stop.value = 8
 				temp.value = 'bus_no'
 				received['stop'] = 8
@@ -213,11 +214,11 @@ def server(data,temp,central_authority_broadcast, bus_send, eta_send, pass_send,
 		print('Made a connection with', address, 'on', init_time + '.')
 
 		#threading.newthread(clientHandle, (client_socket, address, realVehicleIndex))
-		print("starting thread")
+		print("Starting the server thread")
 		threading.Thread(target=clientHandle, args=(client_socket, address, realVehicleIndex)).start()
 
 
-def eta_code(bus_lane, stop):
+def eta_code(bus_lane, stop, next_stop):
 	#eta initialise
 	eta = -1
 
@@ -239,17 +240,16 @@ def eta_code(bus_lane, stop):
 	stop7 = '198691696'
 	stop8 = '807418425#1'
 
-	#stores calculated time between stops
-	time1_2 = 12
-	time2_3 = 12
-	time3_4 = 12
-	time4_5 = 12
-	time5_6 = 12
-	time6_7 = 12
-	time7_8 = 12
+	#stores calculated time between stops in minutes
+	time1_2 = 3 	#from 30 seconds to 200 seconds
+	time2_3 = 2 	#from 220 seconds to 328 seconds
+	time3_4 = 2		#from 348 secodns to 427 seconds
+	time4_5 = 3		#from 447 seconds to  595
+	time5_6 = 2		#from 615 seconds to 717
+	time6_7 = 1		#from 737 seconds to 803
+	time7_8 = 2		#from 823 seconds to 914
 
 	#next stop from bus
-	next_stop = 0
 	time_to_next_stop = 0
 	#if found bus between stop (flag)
 	find = 0
@@ -353,10 +353,35 @@ def eta_code(bus_lane, stop):
 				bus_lane = stop8
 				find = 1
 				break
-	print(time_to_next_stop)
+
+	if find == 0:
+		if bus_lane != stop1 and bus_lane != stop2 and bus_lane != stop3 and bus_lane != stop4 and bus_lane != stop5 and bus_lane != stop6 and bus_lane != stop7 and bus_lane != stop8:
+			if next_stop == 2:
+				time_to_next_stop = time1_2/2
+				bus_lane = stop2
+			if next_stop == 3:
+				time_to_next_stop = time2_3/2
+				bus_lane = stop3
+			if next_stop == 4:
+				time_to_next_stop = time3_4/2
+				bus_lane = stop4
+			if next_stop == 5:
+				time_to_next_stop = time4_5/2
+				bus_lane = stop5
+			if next_stop == 6:
+				time_to_next_stop = time5_6/2
+				bus_lane = stop6
+			if next_stop == 7:
+				time_to_next_stop = time6_7/2
+				bus_lane = stop7
+			if next_stop == 8:
+				time_to_next_stop = time7_8/2
+				bus_lane = stop8
+
+	#print(time_to_next_stop)
 	#check if bus is at a current stop
 	if bus_lane == stop1:
-		print("STOP1")
+		#print("STOP1")
 		#if check every stop
 		if stop == 1:
 			eta = 0
@@ -376,7 +401,7 @@ def eta_code(bus_lane, stop):
 			eta = time1_2 + time2_3 + time3_4 + time4_5 + time5_6 + time6_7 + time7_8 + time_to_next_stop
 
 	elif bus_lane == stop2:
-		print("STOP2")
+		#print("STOP2")
 		#if check every stop
 		if stop == 2:
 			eta = 0 + time_to_next_stop
@@ -393,7 +418,7 @@ def eta_code(bus_lane, stop):
 		if stop == 8:
 			eta = time2_3 + time3_4 + time4_5 + time5_6 + time6_7 + time7_8 + time_to_next_stop
 	elif bus_lane == stop3:
-		print("STOP3")
+		#print("STOP3")
 		time_to_next_stop = 0
 		#if check every stop
 		if stop == 3:
@@ -409,7 +434,7 @@ def eta_code(bus_lane, stop):
 		if stop == 8:
 			eta = time3_4 + time4_5 + time5_6 + time6_7 + time7_8 + time_to_next_stop
 	elif bus_lane == stop4:
-		print("STOP4")
+		#print("STOP4")
 		#if check every stop
 		if stop == 4:
 			eta = 0 + time_to_next_stop
@@ -422,7 +447,7 @@ def eta_code(bus_lane, stop):
 		if stop == 8:
 			eta = time4_5 + time5_6 + time6_7 + time7_8 + time_to_next_stop
 	elif bus_lane == stop5:
-		print("STOP5")
+		#print("STOP5")
 		#if check every stop
 		if stop == 5:
 			eta = 0 + time_to_next_stop
@@ -433,7 +458,7 @@ def eta_code(bus_lane, stop):
 		if stop == 8:
 			eta = time5_6 + time6_7 + time7_8 + time_to_next_stop
 	elif bus_lane == stop6:
-		print("STOP6")
+		#print("STOP6")
 		#if check every stop
 		if stop == 6:
 			eta = 0 + time_to_next_stop
@@ -442,14 +467,14 @@ def eta_code(bus_lane, stop):
 		if stop == 8:
 			eta = time6_7 + time7_8 + time_to_next_stop
 	elif bus_lane == stop7:
-		print("STOP7")
+		#print("STOP7")
 		#if check every stop
 		if stop == 7:
 			eta = 0 + time_to_next_stop
 		if stop == 8:
 			eta = time7_8 + time_to_next_stop
 	elif bus_lane == stop8:
-		print("STOP8")
+		#print("STOP8")
 		#if check every stop
 		eta = -1
 		if stop == 8:
@@ -541,7 +566,7 @@ if __name__ == '__main__':
 	flag_stops = 1  			#flag to check if code has run before in the get next stop section
 	occupied = 1				#current people on the bus
 	capacity = 1				#bus Capacity
-	bus_id = 'bus_flow.0'		#temporary variable to store bus id for data collection (need to change to allow dynamic readings)
+	#bus_id = 'bus_flow.0'		#temporary variable to store bus id for data collection (need to change to allow dynamic readings)
 	t = 0
 	end_excel = 0
 	prev_eta1 = 0
@@ -600,8 +625,8 @@ if __name__ == '__main__':
 
 						#forever loop gets stuck
 						#while eta == -1:
-						road_id = traci.vehicle.getRoadID(bus_id)
-						eta = eta_code(road_id, stop.value)
+						road_id = traci.vehicle.getRoadID(num)
+						eta = eta_code(road_id, stop.value, stop_num)
 
 						if count_bus_no == 1:
 							if eta == -1:
@@ -631,7 +656,7 @@ if __name__ == '__main__':
 				#end of for loop
 				#send the count to the server variable
 				bus_no.value = count_bus_no
-				print(bus_no.value)
+				#print(bus_no.value)
 				bus_info['no_of_bus'] = count_bus_no
 
 			#end of if statement for bus number
@@ -639,54 +664,56 @@ if __name__ == '__main__':
 
 			if(received['end'] == 1 and end_excel == 0):
 				#create excel sheet for storage
-				print("Received Solution from user\n")
-				print(str(solution.value))
-				print("Bus picked by user\n")
-				print(str(received['bus']))
+				#print("Received Solution from user\n")
+				#print(str(solution.value))
+				#print("Bus picked by user\n")
+				#print(str(received['bus']))
 
 				data = 'Data gathered from session with app'
 				sheet['A1'] = data
 
-				sheet['A3']= 'Bus 1'
-				sheet['A4'] = 'ETA'
-				sheet['B4'] = bus_info['bus1_eta']
-				sheet['A5'] = 'Passengers Onboard'
-				sheet['B5'] = bus_info['bus1_pass']
-				sheet['A6'] = 'Seats Taken'
-				sheet['B6'] = bus_info['bus1_seat']
-
-				sheet['A8'] = 'Bus 2'
-				sheet['A9'] = 'ETA'
-				sheet['B9'] = bus_info['bus2_eta']
-				sheet['A10'] = 'Passengers Onboard'
-				sheet['B10'] = bus_info['bus2_pass']
-				sheet['A11'] = 'Seats Taken'
-				sheet['B11']= bus_info['bus2_seat']
-
-				sheet['A13'] = 'Bus 3'
-				sheet['A14'] = 'ETA'
-				sheet['B14'] = bus_info['bus3_eta']
-				sheet['A15'] = 'Passengers Onboard'
-				sheet['B15'] = bus_info['bus3_pass']
-				sheet['A16'] = 'Seats Taken'
-				sheet['B16']= bus_info['bus3_seat']
+				if bus_no.value >= 1:
+					sheet['A3'] = 'Bus 1'
+					sheet['A4'] = 'ETA'
+					sheet['B4'] = bus_info['bus1_eta']
+					sheet['A5'] = 'Passengers Onboard'
+					sheet['B5'] = bus_info['bus1_pass']
+					sheet['A6'] = 'Seats Taken'
+					sheet['B6'] = bus_info['bus1_seat']
+				if bus_no.value >= 2:
+					sheet['A8'] = 'Bus 2'
+					sheet['A9'] = 'ETA'
+					sheet['B9'] = bus_info['bus2_eta']
+					sheet['A10'] = 'Passengers Onboard'
+					sheet['B10'] = bus_info['bus2_pass']
+					sheet['A11'] = 'Seats Taken'
+					sheet['B11'] = bus_info['bus2_seat']
+				if bus_no.value >= 3:
+					sheet['A13'] = 'Bus 3'
+					sheet['A14'] = 'ETA'
+					sheet['B14'] = bus_info['bus3_eta']
+					sheet['A15'] = 'Passengers Onboard'
+					sheet['B15'] = bus_info['bus3_pass']
+					sheet['A16'] = 'Seats Taken'
+					sheet['B16'] = bus_info['bus3_seat']
 
 				sentence = 'The following response was obtained from the app'
-				sheet['A20'] = sentence
+				sheet['A18'] = sentence
 				bus_stop = 'Bus stop that the user is at'
-				sheet['A21'] = bus_stop
-				sheet['B21'] = 'Stop ' + str(received['stop'])
+				sheet['A19'] = bus_stop
+				sheet['B19'] = 'Stop ' + str(received['stop'])
 				bus_selected = 'Bus selected by the user'
-				sheet['A22'] = bus_selected
-				sheet['B22'] = received['bus']
+				sheet['A20'] = bus_selected
+				sheet['B20'] = received['bus']
 				decision = 'User reasoning behing the bus decision'
-				sheet['A23'] = decision
-				sheet['B23'] = solution.value		#Print out the user output
+				sheet['A21'] = decision
+				sheet['B21'] = solution.value		#Print out the user output
 
 				#print out data for stop selected, bus selected as well
 
 				book.save('Bus_Decisions_Data_Gathered.xlsx')
 				end_excel = 1		#Change flag to get out of loop
+				print("Information obtained with this client session has been stored in the excel database.")
 
 
 		# go to the next time step
