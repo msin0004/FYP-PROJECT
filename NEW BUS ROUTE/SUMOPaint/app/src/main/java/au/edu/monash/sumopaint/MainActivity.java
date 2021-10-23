@@ -37,25 +37,20 @@ import android.content.Intent;
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     // Declare the UI elements.
-    private TextView test_input;
     private TextView server_connection;
-    private String var_testing = null;
 
     private Socket clientSocket = null;
     private BufferedWriter out = null;
     private BufferedReader in = null;
     private Boolean ping = false;
     private String incoming = null;
-    //private int inflag = 0;
     private Timer listenTimer;
     private Handler handler;
+    //values for the drop down boxes (spinners) (hardcoded)
     private String[] stops = new String[]{"Stop 1", "Stop 2", "Stop 3", "Stop 4", "Stop 5", "Stop 6", "Stop 7"};
     private String[] buses = new String[]{"Bus 1", "Bus 2", "Bus 3"};
-    private String stop = null; //stop value to get data on
-    private String bus_decision = null;
-    private String get = "receive"; //variable that requests data from server to be sent
-    private String send = null; //variable that stores data being sent to server
-    //private Spinner spinner;
+    private String stop = null;             //stop value to get data on
+    private String bus_decision = null;     //user input
 
     //flags
     private String instruction = null;
@@ -85,9 +80,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private String Bus3_Seat_val = null;
     private String user_input = null;       //user input decision
 
-    //loop to initialise the bus information
-    private Integer bus_no = 0;
-    private Integer receive_counter = 0;
+    private Integer receive_counter = 0;        //counts the amount of information received from server
     private Integer receive_max = 9999;        //max amount of data received from server at given time.
 
 
@@ -104,14 +97,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Spinner spinner = (Spinner) findViewById(R.id.spinners);
         Spinner bus_option = (Spinner) findViewById(R.id.select_bus);
 
-        //sample code
-        //NOTE
-        //need to define these on the postexecute part of a click otherview the app will crash with an error
-        //test_input = (TextView) findViewById(R.id.textinput);
-        //server_connection = (TextView) findViewById(R.id.server_connection);
+        //initialising spinner
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(MainActivity.this,
                 android.R.layout.simple_spinner_item, stops);
         spinner.setAdapter(adapter);
+        //initialising spinner
         ArrayAdapter<String> adapter_1 = new ArrayAdapter<String>(MainActivity.this,
                 android.R.layout.simple_spinner_item, buses);
         bus_option.setAdapter(adapter_1);
@@ -132,7 +122,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         final Handler handler = new Handler();
 
 
-        if (v.getId() == R.id.buttonHelloSUMO) { // getId() returns the view's identifier
+        if (v.getId() == R.id.buttonHelloSUMO) {
+            //check ping and perform task
             if (ping == false) {
                 new ConnectTask().execute();
             } else if (ping == true) {
@@ -157,6 +148,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             new Senddata().execute();
 
         } else if (v.getId() == R.id.refresh) {
+            //run get data command
             new Getdata().execute();
         }
 
@@ -165,46 +157,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private class ListenTask extends AsyncTask<Boolean, Void, String> {
         protected String doInBackground(Boolean... params) {
-            Log.i("listen", "background");
             if (ping == true) {
                 try {
-                    //Log.i("listen","before the incoming");
                     if (in.ready()) {
-                        //Log.i("ready","inside ready");
                         incoming = String.valueOf(in.readLine());
-                        if (incoming != null) {
-                            //Log.i("if null","not null ");
-                        } else {
-                            //Log.i("if null"," is null ");
-                            return incoming;
-                        }
                     }
-                    //this currently doesnt work
-                    //NEED TO REMOVE LATER
-                    if (incoming == "finished") {
-                        Log.i("listen", "ending");
-                        listenTimer.cancel(); //cancel listening
-                    }
-                    // listenTimer.cancel();
-                    //Log.i("listen","afeter the incoming");
                 } catch (IOException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
             } else if (ping == false) {
-                //Log.i("listen","before the incoming");
+                //close listener
                 listenTimer.cancel();
-                incoming = "ping = false";
+                incoming = "";
             }
             return incoming;
         }
 
         protected void onPostExecute(String result) {
-            Log.i("listen", "post  incoming");
-            Log.i("incoming", incoming);
-            //Log.i("listen", "result");
-            Log.i("result", result);
-
 
             //declaring all text positions
             TextView bus1_name = (TextView) findViewById(R.id.businput1_name);
@@ -232,11 +202,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             //get number of buses arriving to stop
             if (instruction == "bus_no") {
-                //testing value
-                //TextView testing = (TextView) findViewById(R.id.businput1_empty);
-                //testing.setText(result);
 
-                bus_no = Integer.parseInt(incoming);
+                //read user input and convert into an integer
+                //loop to initialise the bus information
+                //stores number of buses arriving to stop
+                Integer bus_no = Integer.parseInt(incoming);
 
                 //calculate the maximum amount of data that can be sent
                 //equals 3 information per bus
@@ -271,20 +241,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     //setting to no buses arriving
                     Bus1 = "No buses are arriving to this stop";
                     title_update = "Select Stop and click go";
-                    /*
-                    bus1_name.setText("No buses are arriving to this stop");
-                    bus1_eta.setText("");
-                    bus1_pass.setText("");
-                    bus1_seat.setText("");
-                    bus2_name.setText("");
-                    bus2_eta.setText("");
-                    bus2_pass.setText("");
-                    bus2_seat.setText("");
-                    bus3_name.setText("");
-                    bus3_eta.setText("");
-                    bus3_pass.setText("");
-                    bus3_seat.setText("");
-                    */
                 }
 
                 if (bus_no == 1) {
@@ -452,6 +408,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             //after sending data to the user
             else if (instruction == "send_data") {
+                //clear all inputs
                 title.setText("Thanks for your input :) !");
                 bus1_name.setText("");
                 bus1_eta.setText("");
@@ -487,13 +444,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         protected Boolean doInBackground(Void... params) {
             if (ping == false) {
                 try {
+                    //connect to socket
                     clientSocket = new Socket("10.0.2.2", 8080);
                     out = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
                     in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
                     ping = true;
-                    Log.i("before", "before print");
-                    //server_connection.setText("testing");
-                    Log.i("test", "text");
 
                 } catch (UnknownHostException e) {
                     // TODO Auto-generated catch block
@@ -531,7 +486,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 try {
                     //checking if stop is null
                     if (stop != null) {
-                        send = stop;
+                        //send the stop the user requested to the server
+                        //variable that stores data being sent to server
+                        String send = stop;
                         out.write(send);
                         out.flush();
 
@@ -555,9 +512,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
 
 
-                //LISTEN CODE
+                //LISTEN CODE TO RUN LISTENING COMMAND
                 listenTimer = new Timer();
-                //incoming = null; //set the incoming to null before receiving new data
                 TimerTask doAsynchronousTask = new TimerTask() {
                     @Override
                     public void run() {
@@ -575,12 +531,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 };
                 listenTimer.schedule(doAsynchronousTask, 100, 1000);
             }
-            Log.i("getdata", "post listen");
             return incoming;
         }
 
         protected void onPostExecute(Boolean result) {
-            Log.i("getdata", "post execute code");
 
         }
     }
@@ -592,7 +546,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 try {
 
                     if (user_input != null) {
-                        //send
+                        //SEND THE BUS OPTION TO SERVER
                         out.write(bus_decision);
                         out.flush();
 
@@ -603,8 +557,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             e.printStackTrace();
                         }
 
-                        //request server for data relating to previous write command
-
+                        //SEND THE USER INPUT TO SERVER
                         out.write(user_input);
                         out.flush();
                         // set instruction value
@@ -617,7 +570,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
 
 
-                //LISTEN CODE
+                //LISTEN CODE TO RUN LISTENING COMMAND
                 listenTimer = new Timer();
                 //incoming = null; //set the incoming to null before receiving new data
                 TimerTask doAsynchronousTask = new TimerTask() {
@@ -638,12 +591,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 listenTimer.schedule(doAsynchronousTask, 100, 1000);
 
             }
-            Log.i("senddata", "post listen");
             return incoming;
         }
 
         protected void onPostExecute(Boolean result) {
-            Log.i("senddata", "post execute code");
 
         }
     }
